@@ -1,6 +1,6 @@
-import { dt, type LanguageMessages } from '#i18n';
+import { createRootTanslations } from '#i18n';
 
-const en = {
+const en = createRootTanslations(dt => ({
   localee: 'en',
   greetings: 'Hello {name}! Your last login was {lastLoginDate:date}.',
   inboxMessages: dt('Hello {name}, you have {messages:plural}.', {
@@ -14,6 +14,6 @@ const en = {
   nested: {
     greetings: 'Hello {names:list}!',
   },
-} as const satisfies LanguageMessages;
+}));
 
 export default en;

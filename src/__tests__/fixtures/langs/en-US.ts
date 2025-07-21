@@ -1,7 +1,7 @@
-import type { Translations } from '#i18n';
+import { createTranslations } from '#i18n';
 
-const enUS = {
+const enUS = createTranslations({
   localee: 'en-US',
-} as const satisfies Translations;
+});
 
 export default enUS;

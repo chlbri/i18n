@@ -1,138 +1,13 @@
-import type { Register } from '../index';
-import type { defineTranslation, ParamOptions } from './defineTranslation';
-
-type StateValeMap = {
-  [key: string]: StateValue;
-};
-
-export type StateValue = string | StateValeMap;
-
-export type SoA<T> = T | T[];
-
-export type RegisteredTranslations = Register extends {
-  translations: infer T;
-}
-  ? T extends infer Translations
-    ? Translations
-    : never
-  : LanguageMessages;
-
-type _Translations<R> = R extends [any, infer N] | string
-  ? N extends { plural: any }
-    ? [
-        StateValue,
-        N & {
-          plural: {
-            [K in keyof N['plural']]: Partial<
-              Record<Exclude<Intl.LDMLPluralRule, 'other'>, string>
-            > & {
-              other: `{?} ${string}`; // {?} is a special placeholder for plural rules
-              formatter?: Intl.NumberFormatOptions;
-              type?: Intl.PluralRuleType;
-            };
-          };
-        },
-      ]
-    : SoA<StateValue>
-  : R extends object
-    ? {
-        [K in keyof R]?: _Translations<R[K]>;
-      }
-    : never;
-
-export type Translations = _Translations<RegisteredTranslations>;
-
-type I18nMessage = string | ReturnType<typeof defineTranslation>;
-
-export type LanguageMessages = {
-  [key: string]: I18nMessage | LanguageMessages;
-};
-
-type Join<K, P> = K extends string
-  ? P extends string
-    ? `${K}.${P}`
-    : never
-  : never;
-
-type DotPathsFor<T extends object = RegisteredTranslations> = {
-  [K in keyof T]: T[K] extends I18nMessage
-    ? K
-    : T[K] extends object
-      ? Join<K, DotPathsFor<T[K]>>
-      : never;
-}[keyof T];
-
-type EnumMap = Record<string, Record<string, string>>;
-
-type ParseArgType<
-  ParamType extends string,
-  ParamName extends string,
-  Enums extends EnumMap,
-> = ParamType extends 'number' | 'plural'
-  ? number
-  : ParamType extends 'date'
-    ? Date
-    : ParamType extends 'list'
-      ? string[]
-      : ParamType extends 'enum'
-        ? ParamName extends keyof Enums
-          ? keyof Enums[ParamName]
-          : never
-        : never;
-
-type ExtractParamArgs<
-  S extends string,
-  Enums extends EnumMap,
-> = S extends `${string}{${infer Param}}${infer Rest}`
-  ? Param extends `${infer Name}:${infer Type}` // If the string contains a parameter
-    ? { [K in Name]: ParseArgType<Type, Name, Enums> } & ExtractParamArgs<
-        Rest,
-        Enums
-      > // If the string contains a parameter with a type
-    : { [K in Param]: string } & ExtractParamArgs<Rest, Enums> // If the string has no parameter type
-  : unknown; // If the string has no parameters
-
-type TranslationAtKeyWithParams<
+import type { ParamOptions } from './defineTranslation';
+import { addFn } from './helpers';
+import type {
+  DotPathsFor,
+  Params,
+  PathsWithNoParams,
+  PathsWithParams,
+  SoA,
   Translations,
-  Key extends string,
-> = Key extends `${infer First}.${infer Rest}`
-  ? First extends keyof Translations
-    ? TranslationAtKeyWithParams<Translations[First], Rest>
-    : never
-  : Key extends keyof Translations
-    ? Translations[Key]
-    : never;
-
-type NormalizedTranslationAtKey<T> =
-  T extends ReturnType<typeof defineTranslation>
-    ? T
-    : [T, ReturnType<typeof defineTranslation>[1]];
-
-type NormalizedTranslationAtKeyWithParams<Key extends string> =
-  NormalizedTranslationAtKey<
-    TranslationAtKeyWithParams<RegisteredTranslations, Key>
-  >;
-
-type Params<S extends DotPathsFor> = ExtractParamArgs<
-  Extract<NormalizedTranslationAtKeyWithParams<S>[0], string>,
-  NormalizedTranslationAtKeyWithParams<S>[1] extends {
-    enum: infer E;
-  }
-    ? keyof E extends never
-      ? EnumMap
-      : E
-    : EnumMap
->;
-
-type PathsWithParams = {
-  [K in DotPathsFor]: keyof Params<K> extends never ? never : K;
-}[DotPathsFor];
-
-type PathsWithNoParams = {
-  [K in DotPathsFor]: keyof Params<K> extends never ? K : never;
-}[DotPathsFor];
-
-export type LowInfer<T> = T & NonNullable<unknown>;
+} from './types';
 
 export const toArray = <T>(value: any): T[] =>
   Array.isArray(value) ? value : [value];
@@ -164,14 +39,16 @@ export const initI18n = <
 
   //@ts-expect-error for build
   const translate: Translate_F<T> = (key, args) => {
-    const _fn: ReturnTranslate<T>['to'] = locale => {
+    const _fn = (locale: Extract<keyof T, string>) => {
       const orderedLocales = new Set([
         ...getOrderedLocaleAndParentLocales(locale),
         ...fallbackLocales.flatMap(getOrderedLocaleAndParentLocales),
       ]);
 
       for (const locale of orderedLocales) {
-        const translationFile = translations[locale as keyof T];
+        const translationFile = translations[
+          locale as keyof T
+        ] as Translations;
         if (translationFile == null) continue;
         const translation = getTranslation(
           locale,
@@ -184,9 +61,9 @@ export const initI18n = <
       return key;
     };
 
-    const out: ReturnTranslate<T> = locale => _fn(locale);
-
-    out.to = _fn;
+    const out = addFn(_fn, {
+      to: _fn,
+    });
 
     return out;
   };
