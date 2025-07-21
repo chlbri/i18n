@@ -19,23 +19,46 @@ export type RegisteredTranslations = Register extends {
     : never
   : LanguageMessages;
 
+export type Keys = keyof any;
+
+export type Plural<S extends Keys> = {
+  [K in S]: Partial<
+    Record<Exclude<Intl.LDMLPluralRule, 'other'>, string>
+  > & {
+    other: `{?} ${string}`; // {?} is a special placeholder for plural rules
+    formatter?: Intl.NumberFormatOptions;
+    type?: Intl.PluralRuleType;
+  };
+};
+
+export type ParamOptions = {
+  date?: Record<string, Intl.DateTimeFormatOptions>;
+  number?: Record<string, Intl.NumberFormatOptions>;
+  plural?: Record<
+    string,
+    Partial<Record<Exclude<Intl.LDMLPluralRule, 'other'>, string>> & {
+      other: string;
+      formatter?: Intl.NumberFormatOptions;
+      type?: Intl.PluralRuleType;
+    }
+  >;
+  enum?: Record<string, Record<string, string>>;
+  list?: Record<string, Intl.ListFormatOptions>;
+};
+
 type _Translations<R> = R extends [any, infer N] | string
   ? N extends { plural: any }
     ? [
         StateValue,
         N & {
-          plural: {
-            [K in keyof N['plural']]: Partial<
-              Record<Exclude<Intl.LDMLPluralRule, 'other'>, string>
-            > & {
-              other: `{?} ${string}`; // {?} is a special placeholder for plural rules
-              formatter?: Intl.NumberFormatOptions;
-              type?: Intl.PluralRuleType;
-            };
-          };
+          plural: Plural<keyof N['plural']>;
         },
       ]
-    : [string, StateValeMap] | string
+    : N extends { enum: any }
+      ? [string, _Translations<N>]
+      : N extends { number: any }
+        ? [string, _Translations<N>]
+        : [string, _Translations<N>] | string
   : R extends object
     ? {
         [K in keyof R]: _Translations<R[K]>;
@@ -70,7 +93,7 @@ type ParseArgType<
   ParamType extends string,
   ParamName extends string,
   Enums extends EnumMap,
-> = ParamType extends 'number' | 'plural'
+> = ParamType extends 'plural'
   ? number
   : ParamType extends 'date'
     ? Date

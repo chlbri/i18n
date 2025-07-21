@@ -1,6 +1,17 @@
-# Beatifull lib
+# @bemedev/i18n
 
-A beautifull description
+An elegant and typed internationalization library for JavaScript and
+TypeScript projects. This library provides a simple yet powerful way to
+handle translations and locale-specific content.
+
+## Features
+
+- ✅ Fully typed API with TypeScript
+- ✅ Formatting support for dates, numbers, lists and more
+- ✅ Elegant plural handling
+- ✅ Typed enum support
+- ✅ Nested translation structure
+- ✅ Automatic fallback to default language
 
 <br/>
 
@@ -16,9 +27,7 @@ MIT
 ...
 </summary>
 
-### Version [0.0.1] --> _date & hour_
-
-- ✨ Première version de la bibliothèque
+[CHANGELOG](https://github.com/chlbri/i18n/blob/main/CHANGELOG.md)
 
 </details>
 
@@ -34,6 +43,51 @@ chlbri (bri_lvi@icloud.com)
 
 <br/>
 
+## Installation
+
+```bash
+# npm
+npm install @bemedev/internationalization
+
+# yarn
+yarn add @bemedev/internationalization
+
+# pnpm
+pnpm add @bemedev/internationalization
+```
+
+## Utilisation rapide
+
+```typescript
+import { initI18n, dt } from '@bemedev/internationalization';
+
+// Définir vos traductions
+const en = {
+  greetings: 'Hello {name}! Your last login was {lastLoginDate:date}.',
+  inboxMessages: dt('Hello {name}, you have {messages:plural}.', {
+    plural: { messages: { one: '1 message', other: '{?} messages' } },
+  }),
+};
+
+const fr = {
+  greetings:
+    'Bonjour {name} ! Votre dernière connexion était le {lastLoginDate:date}.',
+  inboxMessages: dt('Bonjour {name}, vous avez {messages:plural}.', {
+    plural: { messages: { one: '1 message', other: '{?} messages' } },
+  }),
+};
+
+// Initialiser avec vos traductions
+const { translate } = initI18n({ en, fr }, 'en');
+
+// Utiliser les traductions
+const message = translate('greetings', {
+  name: 'John',
+  lastLoginDate: new Date(),
+}).to('fr'); // "Bonjour John ! Votre dernière connexion était le 21/07/2025."
+```
+
 ## Liens
 
-- [Documentation](https://github.com/chlbri/new-package)
+- [Documentation complète](https://github.com/chlbri/internationalization)
+- [Signaler un problème](https://github.com/chlbri/internationalization/issues)

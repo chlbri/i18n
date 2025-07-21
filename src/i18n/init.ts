@@ -1,18 +1,12 @@
-import type { ParamOptions } from './defineTranslation';
 import { addFn } from './helpers';
 import type {
   DotPathsFor,
+  ParamOptions,
   Params,
   PathsWithNoParams,
   PathsWithParams,
-  SoA,
   Translations,
 } from './types';
-
-export const toArray = <T>(value: any): T[] =>
-  Array.isArray(value) ? value : [value];
-
-toArray.typed = <T>(value: T | T[]): T[] => toArray(value);
 
 export type ReturnTranslate<T> = {
   (locale?: Extract<keyof T, string>): string;
@@ -31,19 +25,20 @@ export type Translate_F<
 
 export const initI18n = <
   const T extends Record<Lowercase<string>, Translations>,
+  K extends Extract<keyof T, string> = Extract<keyof T, string>,
 >(
   translations: T,
-  fallbackLocale: SoA<keyof T>,
+  ...fallbacks: K[]
 ) => {
-  const fallbackLocales = toArray<string>(fallbackLocale);
-
   //@ts-expect-error for build
   const translate: Translate_F<T> = (key, args) => {
-    const _fn = (locale: Extract<keyof T, string>) => {
+    const _fn = (locale: K) => {
       const orderedLocales = new Set([
         ...getOrderedLocaleAndParentLocales(locale),
-        ...fallbackLocales.flatMap(getOrderedLocaleAndParentLocales),
+        ...fallbacks.flatMap(getOrderedLocaleAndParentLocales),
       ]);
+
+      let out1 = '';
 
       for (const locale of orderedLocales) {
         const translationFile = translations[
@@ -56,9 +51,13 @@ export const initI18n = <
           key,
           args,
         );
-        if (translation) return translation;
+        if (translation) {
+          out1 = translation;
+          break;
+        }
       }
-      return key;
+
+      return out1;
     };
 
     const out = addFn(_fn, {
@@ -92,18 +91,15 @@ function getTranslation<S extends DotPathsFor, A extends Params<S>>(
 ) {
   const translation = getTranslationByKey(translations, key);
   const argObj = args || {};
+
   if (typeof translation === 'string') {
     return performSubstitution(locale, translation, argObj, {});
   }
 
   if (Array.isArray(translation)) {
-    const [str, translationParams] = translation;
-    return performSubstitution(
-      locale,
-      str,
-      argObj,
-      translationParams as ParamOptions,
-    );
+    const [str, options] = translation;
+
+    return performSubstitution(locale, str, argObj, options);
   }
 
   return undefined;
@@ -113,50 +109,52 @@ function getTranslationByKey(obj: Translations, key: string) {
   const keys = key.split('.');
   let currentObj: any = obj;
 
+  let out = undefined;
+
   for (let i = 0; i <= keys.length - 1; i++) {
     const k = keys[i];
     const newObj = currentObj[k];
-    if (newObj == null) return undefined;
+    if (!newObj) return undefined;
 
-    if (typeof newObj === 'string' || Array.isArray(newObj)) {
-      if (i < keys.length - 1) return undefined;
-      return newObj;
+    const canReturn =
+      typeof newObj === 'string' ||
+      (Array.isArray(newObj) &&
+        newObj.length === 2 &&
+        typeof newObj[0] === 'string');
+
+    if (canReturn) {
+      out = newObj;
+      break;
     }
 
     currentObj = newObj;
   }
 
-  return undefined;
+  return out;
 }
 
 function performSubstitution(
   locale: string,
   str: string,
-  args: Record<string, unknown>,
+  args: Record<string, any>,
   translationParams: ParamOptions,
 ) {
   const entries = Object.entries(args);
 
   return entries.reduce((result, [argKey, argValue]) => {
     const match = result.match(`{${argKey}:?([^}]*)?}`);
-    const [replaceKey, argType] = match
-      ? match
-      : [`{${argKey}}`, undefined];
+    const [replaceKey, argType] = match!;
 
     switch (argType) {
       case 'plural': {
-        if (typeof argValue !== 'number')
-          throw new Error('Invalid argument');
         const pluralMap = translationParams.plural?.[argKey];
         const pluralRules = new Intl.PluralRules(locale, {
           type: pluralMap?.type,
         });
 
         const replacement =
-          pluralMap?.[pluralRules.select(argValue)] ?? pluralMap?.other;
+          pluralMap?.[pluralRules.select(argValue)] ?? pluralMap!.other;
 
-        if (replacement == null)
-          throw new Error('Missing replacement value');
         const numberFormatter = new Intl.NumberFormat(
           locale,
           translationParams.plural?.[argKey]?.formatter,
@@ -167,18 +165,11 @@ function performSubstitution(
         );
       }
       case 'enum': {
-        if (typeof argValue !== 'string')
-          throw new Error('Invalid argument');
-        const enumMap = translationParams.enum?.[argKey];
-        const replacement = enumMap?.[argValue];
+        const replacement = translationParams.enum![argKey][argValue];
 
-        if (replacement == null)
-          throw new Error('Missing replacement value');
         return result.replace(replaceKey, replacement);
       }
       case 'number': {
-        if (typeof argValue !== 'number')
-          throw new Error('Invalid argument');
         const numberFormat = new Intl.NumberFormat(
           locale,
           translationParams.number?.[argKey],
@@ -187,8 +178,6 @@ function performSubstitution(
         return result.replace(replaceKey, numberFormat.format(argValue));
       }
       case 'list': {
-        if (!Array.isArray(argValue)) throw new Error('Invalid argument');
-
         const formatter = new Intl.ListFormat(
           locale,
           translationParams.list?.[argKey],
@@ -196,9 +185,6 @@ function performSubstitution(
         return result.replace(replaceKey, formatter.format(argValue));
       }
       case 'date': {
-        if (!(argValue instanceof Date))
-          throw new Error('Invalid argument');
-
         const dateFormat = new Intl.DateTimeFormat(
           locale,
           translationParams.date?.[argKey],

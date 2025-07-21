@@ -3,9 +3,17 @@
 <br/>
 <br/>
 
-### Version [0.0.1] --> _date & hour_
 
-- ✨ Première version de la bibliothèque
+### Version [0.0.1] --> _2025/07/21 23:00_
+
+- ✨ First version of the library
+- 🎉 Initial support for translations with interpolation
+- 🌐 Support for date formats, numbers, lists
+- 🔄 Handling of plurals and enumerations
+- ✨ Addition of comprehensive tests for all translation features
+- 🧪 Tests for translation keys
+- 📝 Documentation improvement with usage examples
+- 🔧 README update with complete package description
 
 <br/>
 

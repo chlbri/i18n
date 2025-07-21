@@ -12,7 +12,7 @@ const en = createRootTanslations(dt => ({
     enum: { hobby: { runner: 'runner', developer: 'developer' } },
   }),
   nested: {
-    greetings: 'Hello {names:list}!',
+    greetings: dt('Hello {names:list}!', { list: { names: {} } }),
   },
 }));
 

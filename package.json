@@ -1,5 +1,5 @@
 {
-  "name": "@bemedev/internationalization",
+  "name": "@bemedev/i18n",
   "version": "0.0.1",
   "description": "Internationalization library for Bemedev projects, providing utilities for managing translations and locale-specific content.",
   "author": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/chlbri/internationalization"
+    "url": "https://github.com/chlbri/i18n.git"
   },
   "license": "MIT",
   "type": "module",
@@ -31,7 +31,14 @@
     }
   ],
   "keywords": [
-    "//TODO"
+    "i18n",
+    "internationalization",
+    "localization",
+    "translation",
+    "typescript",
+    "formatting",
+    "plurals",
+    "bemedev"
   ],
   "files": [
     "lib",
