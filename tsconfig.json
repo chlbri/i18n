@@ -21,6 +21,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
+    "paths": {
+      "#i18n": ["./src/i18n/index.ts"]
+    },
     "noEmit": true,
     "declarationMap": true
   }

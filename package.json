@@ -1,7 +1,7 @@
 {
-  "name": "@bemedev///TODO",
+  "name": "@bemedev/internationalization",
   "version": "0.0.1",
-  "description": "//TODO",
+  "description": "Internationalization library for Bemedev projects, providing utilities for managing translations and locale-specific content.",
   "author": {
     "email": "bri_lvi@icloud.com",
     "name": "chlbri",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "//TODO"
+    "url": "https://github.com/chlbri/internationalization"
   },
   "license": "MIT",
   "type": "module",
