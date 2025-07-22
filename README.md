@@ -15,6 +15,218 @@ handle translations and locale-specific content.
 
 <br/>
 
+## Installation
+
+```bash
+# npm
+npm install @bemedev/i18n
+
+# yarn
+yarn add @bemedev/i18n
+
+# pnpm
+pnpm add @bemedev/i18n
+```
+
+## Complete Usage Guide
+
+### Basic Setup
+
+To start using `@bemedev/i18n`, first initialize the library with your translations:
+
+```typescript
+import { initI18n } from '@bemedev/i18n';
+
+// Define your translations
+const en = {
+  greetings: 'Hello {name}!',
+  dashboard: {
+    welcome: 'Welcome to your dashboard',
+    stats: 'You have {count} notifications',
+  },
+};
+
+const fr = {
+  greetings: 'Bonjour {name} !',
+  dashboard: {
+    welcome: 'Bienvenue sur votre tableau de bord',
+    stats: 'Vous avez {count} notifications',
+  },
+};
+
+// Initialize with your translations and set English as the default language
+const { translate } = initI18n({ en, fr }, 'en');
+```
+
+### Simple Usage
+
+```typescript
+// Translation without parameters
+const welcome = translate('dashboard.welcome')(); // "Welcome to your dashboard"
+
+// Translation with parameters
+const greeting = translate('greetings', { name: 'John' })(); // "Hello John!"
+
+// Translation with language change
+const greetingFr = translate('greetings', { name: 'John' }).to('fr'); // "Bonjour John !"
+```
+
+### Advanced Features
+
+#### Date Formatting
+
+```typescript
+import { dt } from '@bemedev/i18n';
+
+const messages = {
+  lastSeen: dt('Last seen: {date:date}', {
+    date: {
+      date: { dateStyle: 'full' },
+    },
+  }),
+};
+
+// Usage
+translate('lastSeen', { date: new Date() })();
+// "Last seen: Wednesday, July 21, 2025"
+```
+
+#### Plural Handling
+
+```typescript
+const messages = {
+  items: dt('You have {count:plural} in your cart', {
+    plural: {
+      count: {
+        one: '{?} item',
+        other: '{?} items',
+      },
+    },
+  }),
+};
+
+// Usage
+translate('items', { count: 1 })(); // "You have 1 item in your cart"
+translate('items', { count: 5 })(); // "You have 5 items in your cart"
+```
+
+#### Typed Enums
+
+```typescript
+const messages = {
+  status: dt('Your order status is {status:enum}', {
+    enum: {
+      status: {
+        pending: 'awaiting processing',
+        shipped: 'on its way',
+        delivered: 'delivered',
+      },
+    },
+  }),
+};
+
+// Usage
+translate('status', { status: 'pending' })(); // "Your order status is awaiting processing"
+```
+
+#### Formatted Lists
+
+```typescript
+const messages = {
+  friends: dt('Online: {users:list}', {
+    list: {
+      users: { style: 'long', type: 'conjunction' },
+    },
+  }),
+};
+
+// Usage
+translate('friends', { users: ['Alice', 'Bob', 'Charlie'] })();
+// "Online: Alice, Bob, and Charlie"
+```
+
+### Strong Typing with TypeScript
+
+#### Extending the Register Interface
+
+The library uses a `Register` interface to ensure strong typing for your translations. To fully leverage TypeScript's type system, extend this interface with your own translation types:
+
+1. Create a type definition file for your translations:
+
+```typescript
+// translations.ts
+export const en = {
+  greetings: 'Hello {name}!',
+  dashboard: {
+    welcome: 'Welcome to your dashboard',
+    stats: 'You have {count} notifications',
+  },
+};
+
+export type Translations = typeof en;
+```
+
+2. Extend the `Register` interface in a declaration file:
+
+```typescript
+// types.d.ts or similar
+import type { Translations } from './translations';
+
+declare module '@bemedev/i18n' {
+  interface Register {
+    translations: Translations;
+  }
+}
+```
+
+Once configured, you'll benefit from full autocompletion and type checking:
+
+```typescript
+// Autocompletion for translation keys
+translate('dashboard.welcome')();
+
+// TypeScript error if the key does not exist
+translate('dashboard.nonexistent')(); // ❌ Error
+
+// Parameter validation
+translate('greetings', { name: 'John' })(); // ✅ OK
+translate('greetings')(); // ❌ Error: missing 'name' parameter
+```
+
+## Advanced Examples
+
+### Language Fallbacks
+
+```typescript
+// Define multiple fallback languages
+const { translate } = initI18n({ en, fr, 'en-US', 'en-GB' }, 'en', 'en-US');
+
+// If a translation is not available in 'en-GB',
+// it will be searched in 'en-US', then in 'en'
+```
+
+### Nested Translation Structure
+
+```typescript
+const translations = {
+  en: {
+    app: {
+      nav: {
+        home: 'Home',
+        settings: 'Settings',
+        profile: {
+          edit: 'Edit Profile',
+          view: 'View Profile',
+        },
+      },
+    },
+  },
+};
+
+// Access with dot notation
+translate('app.nav.profile.edit')(); // "Edit Profile"
+```
+
 ## Licence
 
 MIT
@@ -43,51 +255,7 @@ chlbri (bri_lvi@icloud.com)
 
 <br/>
 
-## Installation
-
-```bash
-# npm
-npm install @bemedev/internationalization
-
-# yarn
-yarn add @bemedev/internationalization
-
-# pnpm
-pnpm add @bemedev/internationalization
-```
-
-## Utilisation rapide
-
-```typescript
-import { initI18n, dt } from '@bemedev/internationalization';
-
-// Définir vos traductions
-const en = {
-  greetings: 'Hello {name}! Your last login was {lastLoginDate:date}.',
-  inboxMessages: dt('Hello {name}, you have {messages:plural}.', {
-    plural: { messages: { one: '1 message', other: '{?} messages' } },
-  }),
-};
-
-const fr = {
-  greetings:
-    'Bonjour {name} ! Votre dernière connexion était le {lastLoginDate:date}.',
-  inboxMessages: dt('Bonjour {name}, vous avez {messages:plural}.', {
-    plural: { messages: { one: '1 message', other: '{?} messages' } },
-  }),
-};
-
-// Initialiser avec vos traductions
-const { translate } = initI18n({ en, fr }, 'en');
-
-// Utiliser les traductions
-const message = translate('greetings', {
-  name: 'John',
-  lastLoginDate: new Date(),
-}).to('fr'); // "Bonjour John ! Votre dernière connexion était le 21/07/2025."
-```
-
 ## Liens
 
-- [Documentation complète](https://github.com/chlbri/internationalization)
-- [Signaler un problème](https://github.com/chlbri/internationalization/issues)
+- [Documentation](https://github.com/chlbri/i18n)
+- [Signaler un problème](https://github.com/chlbri/i18n/issues)

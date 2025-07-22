@@ -1,5 +1,4 @@
 import type { Register } from '..';
-import type { defineTranslation } from './defineTranslation';
 
 export type Fn<Args extends any[] = any[], R = any> = (...args: Args) => R;
 
@@ -31,6 +30,10 @@ export type Plural<S extends Keys> = {
   };
 };
 
+export type DateArgs<S extends Keys> = {
+  [K in S]?: Intl.DateTimeFormatOptions;
+};
+
 export type ParamOptions = {
   date?: Record<string, Intl.DateTimeFormatOptions>;
   number?: Record<string, Intl.NumberFormatOptions>;
@@ -46,19 +49,32 @@ export type ParamOptions = {
   list?: Record<string, Intl.ListFormatOptions>;
 };
 
-type _Translations<R> = R extends [any, infer N] | string
-  ? N extends { plural: any }
-    ? [
-        StateValue,
-        N & {
-          plural: Plural<keyof N['plural']>;
-        },
-      ]
-    : N extends { enum: any }
-      ? [string, _Translations<N>]
-      : N extends { number: any }
-        ? [string, _Translations<N>]
-        : [string, _Translations<N>] | string
+type ParseOptionType<
+  ParamType extends string,
+  ParamName extends string,
+> = ParamType extends 'number'
+  ? { number?: { [K in ParamName]?: Intl.NumberFormatOptions } }
+  : ParamType extends 'plural'
+    ? {
+        plural: Plural<ParamName>;
+      }
+    : ParamType extends 'date'
+      ? { date?: DateArgs<ParamName> }
+      : ParamType extends 'list'
+        ? { list?: { [K in ParamName]?: Intl.ListFormatOptions } }
+        : ParamType extends 'enum'
+          ? { enum: { [K in ParamName]: Record<string, string> } }
+          : never;
+
+export type ExtractParamOptions<S extends string> =
+  S extends `${string}{${infer Param}}${infer Rest}`
+    ? Param extends `${infer Name}:${infer Type}` // If the string contains a parameter
+      ? ParseOptionType<Type, Name> & ExtractParamOptions<Rest> // If the string contains a parameter with a type
+      : ExtractParamOptions<Rest> // If the string has no parameter type
+    : unknown; // If the string has no parameters
+
+type _Translations<R> = R extends [any, any] | (infer S extends string)
+  ? [string, ExtractParamOptions<S>] | string
   : R extends object
     ? {
         [K in keyof R]: _Translations<R[K]>;
@@ -67,7 +83,9 @@ type _Translations<R> = R extends [any, infer N] | string
 
 export type Translations = Partial<_Translations<RegisteredTranslations>>;
 
-export type I18nMessage = string | ReturnType<typeof defineTranslation>;
+type Array2 = [string, unknown];
+
+export type I18nMessage = string | Array2;
 
 export type LanguageMessages = {
   [key: string]: I18nMessage | LanguageMessages;
@@ -93,7 +111,7 @@ type ParseArgType<
   ParamType extends string,
   ParamName extends string,
   Enums extends EnumMap,
-> = ParamType extends 'plural'
+> = ParamType extends 'plural' | 'number'
   ? number
   : ParamType extends 'date'
     ? Date
@@ -128,10 +146,7 @@ type TranslationAtKeyWithParams<
     ? Translations[Key]
     : never;
 
-type NormalizedTranslationAtKey<T> =
-  T extends ReturnType<typeof defineTranslation>
-    ? T
-    : [T, ReturnType<typeof defineTranslation>[1]];
+type NormalizedTranslationAtKey<T> = T extends Array2 ? T : [T, Array2[1]];
 
 type NormalizedTranslationAtKeyWithParams<Key extends string> =
   NormalizedTranslationAtKey<

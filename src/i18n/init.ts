@@ -1,6 +1,6 @@
 import { addFn } from './helpers';
 import type {
-  DotPathsFor,
+  LanguageMessages,
   ParamOptions,
   Params,
   PathsWithNoParams,
@@ -23,52 +23,71 @@ export type Translate_F<
   ): ReturnTranslate<T>;
 };
 
+export type Paths<K extends keyof Translations = keyof Translations> =
+  K extends PathsWithParams
+    ? { key: PathsWithParams; args: Params<K> }
+    : { key: PathsWithNoParams } | PathsWithNoParams;
+
+export type TranslateWithLocale_F<
+  T extends Record<Lowercase<string>, Translations>,
+> = (locale: Extract<keyof T, string>, args: Paths) => string;
+
 export const initI18n = <
-  const T extends Record<Lowercase<string>, Translations>,
+  const T extends Record<Lowercase<string>, LanguageMessages>,
   K extends Extract<keyof T, string> = Extract<keyof T, string>,
 >(
   translations: T,
   ...fallbacks: K[]
 ) => {
+  const translateWithLocale: TranslateWithLocale_F<T> = (
+    locale,
+    values,
+  ) => {
+    const orderedLocales = new Set([
+      ...getOrderedLocaleAndParentLocales(locale),
+      ...fallbacks.flatMap(getOrderedLocaleAndParentLocales),
+    ]);
+
+    let out1 = '';
+
+    for (const locale of orderedLocales) {
+      const translationFile = translations[locale as keyof T];
+      if (translationFile == null) continue;
+      const _values: any =
+        typeof values === 'string' ? { key: values, args: {} } : values;
+
+      const translation = getTranslation(
+        locale,
+        translationFile,
+        _values.key,
+        _values.args,
+      );
+      if (translation) {
+        out1 = translation;
+        break;
+      }
+    }
+
+    return out1;
+  };
+
   //@ts-expect-error for build
   const translate: Translate_F<T> = (key, args) => {
-    const _fn = (locale: K) => {
-      const orderedLocales = new Set([
-        ...getOrderedLocaleAndParentLocales(locale),
-        ...fallbacks.flatMap(getOrderedLocaleAndParentLocales),
-      ]);
-
-      let out1 = '';
-
-      for (const locale of orderedLocales) {
-        const translationFile = translations[
-          locale as keyof T
-        ] as Translations;
-        if (translationFile == null) continue;
-        const translation = getTranslation(
-          locale,
-          translationFile,
-          key,
-          args,
-        );
-        if (translation) {
-          out1 = translation;
-          break;
-        }
-      }
-
-      return out1;
+    const to = (locale: K) => {
+      return translateWithLocale(locale, {
+        key,
+        args,
+      } as Paths);
     };
 
-    const out = addFn(_fn, {
-      to: _fn,
-    });
+    const out = addFn(to, { to });
 
     return out;
   };
 
   return {
     translate,
+    translateWithLocale,
   };
 };
 
@@ -83,11 +102,11 @@ function getOrderedLocaleAndParentLocales(locale?: string) {
   return locales;
 }
 
-function getTranslation<S extends DotPathsFor, A extends Params<S>>(
+function getTranslation(
   locale: string,
   translations: Translations,
-  key: S,
-  args?: A,
+  key: string,
+  args?: any,
 ) {
   const translation = getTranslationByKey(translations, key);
   const argObj = args || {};
@@ -152,8 +171,7 @@ function performSubstitution(
           type: pluralMap?.type,
         });
 
-        const replacement =
-          pluralMap?.[pluralRules.select(argValue)] ?? pluralMap!.other;
+        const replacement = pluralMap![pluralRules.select(argValue)]!;
 
         const numberFormatter = new Intl.NumberFormat(
           locale,

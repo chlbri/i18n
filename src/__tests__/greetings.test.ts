@@ -31,7 +31,7 @@ describe('greetings', () => {
       {
         invite: 'es',
         parameters: 'es-es',
-        expected: '¡Hola John! Tu última conexión fue el 1/10/2023.',
+        expected: '¡Hola John! Tu última conexión fue el 01/10/2023.',
       },
       {
         invite: 'not-exists => en',

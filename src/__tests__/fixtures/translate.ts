@@ -3,7 +3,7 @@ import en from './langs/en';
 import enUS from './langs/en-US';
 import esES from './langs/es-ES';
 
-export const { translate } = initI18n(
+export const { translate, translateWithLocale } = initI18n(
   {
     en,
     'en-us': enUS,

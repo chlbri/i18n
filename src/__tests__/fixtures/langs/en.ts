@@ -12,8 +12,20 @@ const en = createRootTanslations(dt => ({
     enum: { hobby: { runner: 'runner', developer: 'developer' } },
   }),
   nested: {
-    greetings: dt('Hello {names:list}!', { list: { names: {} } }),
+    greetings: dt('Hello {names:list}!', {
+      list: { names: { style: 'short' } },
+    }),
   },
+
+  jerseyNumber: dt('Your number is {jersey:number}.', {
+    number: {
+      jersey: {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      },
+    },
+  }),
 }));
 
 export default en;

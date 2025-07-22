@@ -3,11 +3,27 @@ import { createTranslations } from '#i18n';
 const esES = createTranslations(dt => ({
   localee: 'es-ES',
 
-  greetings:
+  greetings: dt(
     '¡Hola {name}! Tu última conexión fue el {lastLoginDate:date}.',
+    {
+      date: {
+        lastLoginDate: {
+          month: '2-digit',
+          year: 'numeric',
+          day: '2-digit',
+        },
+      },
+    },
+  ),
 
   inboxMessages: dt('Hola {name}, tienes {messages:plural}.', {
-    plural: { messages: { one: '1 mensaje', other: '{?} mensajes' } },
+    plural: {
+      messages: {
+        one: '1 mensaje',
+        other: '{?} mensajes',
+        two: '2 mensajes',
+      },
+    },
   }),
 
   hobby: dt('Elegiste {hobby:enum} como tu pasatiempo.', {
@@ -17,6 +33,12 @@ const esES = createTranslations(dt => ({
   nested: {
     greetings: '¡Hola {names:list}!',
   },
+
+  jerseyNumber: dt('Tu número es {jersey:number}.', {
+    number: {
+      jersey: {},
+    },
+  }),
 }));
 
 export default esES;
