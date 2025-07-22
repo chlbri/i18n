@@ -32,7 +32,8 @@ pnpm add @bemedev/i18n
 
 ### Basic Setup
 
-To start using `@bemedev/i18n`, first initialize the library with your translations:
+To start using `@bemedev/i18n`, first initialize the library with your
+translations:
 
 ```typescript
 import { initI18n } from '@bemedev/i18n';
@@ -149,7 +150,9 @@ translate('friends', { users: ['Alice', 'Bob', 'Charlie'] })();
 
 #### Extending the Register Interface
 
-The library uses a `Register` interface to ensure strong typing for your translations. To fully leverage TypeScript's type system, extend this interface with your own translation types:
+The library uses a `Register` interface to ensure strong typing for your
+translations. To fully leverage TypeScript's type system, extend this
+interface with your own translation types:
 
 1. Create a type definition file for your translations:
 
@@ -239,7 +242,7 @@ MIT
 ...
 </summary>
 
-[CHANGELOG](https://github.com/chlbri/i18n/blob/main/CHANGELOG.md)
+[CHANGELOG](https://github.com/chlbri/i18n/blob/main/CHANGE_LOG.md)
 
 </details>
 
@@ -248,6 +251,15 @@ MIT
 ## Auteur
 
 chlbri (bri_lvi@icloud.com)
+
+<br/>
+
+## Inspired by
+
+[Web Dev Simplified](https://www.youtube.com/@WebDevSimplified)
+
+The Youtube video that inspired this library can be found
+[here](https://www.youtube.com/watch?v=VbZVx13b2oY).
 
 [My github](https://github.com/chlbri?tab=repositories)
 

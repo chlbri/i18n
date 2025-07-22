@@ -3,8 +3,20 @@
 <br/>
 <br/>
 
+<details>
+<summary><h3>Version [0.0.2] &mdash; 2025/07/21 23:00</h3></summary>
 
-### Version [0.0.1] --> _2025/07/21 23:00_
+- Add credentials to
+  [Web Dev Simplified](https://www.youtube.com/@WebDevSimplified)
+- ✨ Upgrade deps
+- 🧪 **100%** _coverage_
+
+</details>
+
+<br/>
+
+<details>
+<summary><h3>Version [0.0.1] &mdash; 2025/07/21 23:00</h3></summary>
 
 - ✨ First version of the library
 - 🎉 Initial support for translations with interpolation
@@ -14,6 +26,8 @@
 - 🧪 Tests for translation keys
 - 📝 Documentation improvement with usage examples
 - 🔧 README update with complete package description
+
+</details>
 
 <br/>
 
