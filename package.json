@@ -1,6 +1,6 @@
 {
   "name": "@bemedev/i18n",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Internationalization library for Bemedev projects, providing utilities for managing translations and locale-specific content.",
   "author": {
     "email": "bri_lvi@icloud.com",
@@ -95,8 +95,8 @@
     "@eslint/js": "^9.31.0",
     "@size-limit/file": "^11.2.0",
     "@types/node": "^24.0.15",
-    "@typescript-eslint/eslint-plugin": "^8.37.0",
-    "@typescript-eslint/parser": "^8.37.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.31.0",
     "glob": "^11.0.3",
