@@ -1,6 +1,8 @@
 import { addFn } from './helpers';
 import type {
+  ByObjectKey,
   LanguageMessages,
+  ObjectDotKeys,
   ParamOptions,
   Params,
   PathsWithNoParams,
@@ -8,7 +10,7 @@ import type {
   Translations,
 } from './types';
 
-export type ReturnTranslate<T> = {
+export type ReturnTranslate1<T> = {
   (locale?: Extract<keyof T, string>): string;
   to: (locale?: Extract<keyof T, string>) => string;
 };
@@ -16,11 +18,17 @@ export type ReturnTranslate<T> = {
 export type Translate_F<
   T extends Record<Lowercase<string>, Translations>,
 > = {
-  <S extends PathsWithNoParams>(key: S): ReturnTranslate<T>;
+  <S extends PathsWithNoParams>(key: S): ReturnTranslate1<T>;
   <S extends PathsWithParams, A extends Params<S>>(
     key: S,
     args: A,
-  ): ReturnTranslate<T>;
+  ): ReturnTranslate1<T>;
+  <S extends ObjectDotKeys>(
+    key: S,
+  ): {
+    (locale?: Extract<keyof T, string>): ByObjectKey<S>;
+    to: (locale?: Extract<keyof T, string>) => ByObjectKey<S>;
+  };
 };
 
 export type Paths<K extends keyof Translations = keyof Translations> =
@@ -29,7 +37,7 @@ export type Paths<K extends keyof Translations = keyof Translations> =
     : { key: PathsWithNoParams } | PathsWithNoParams;
 
 export type TranslateWithLocale_F<
-  T extends Record<Lowercase<string>, Translations>,
+  T extends Record<Lowercase<string>, LanguageMessages>,
 > = (locale: Extract<keyof T, string>, args: Paths) => string;
 
 export const initI18n = <
@@ -58,7 +66,7 @@ export const initI18n = <
 
       const translation = getTranslation(
         locale,
-        translationFile,
+        translationFile as any,
         _values.key,
         _values.args,
       );
@@ -116,9 +124,35 @@ function getTranslation(
   }
 
   if (Array.isArray(translation)) {
+    const canReturn =
+      translation.length !== 2 || typeof translation[1] === 'string';
+
+    if (canReturn) return translation;
     const [str, options] = translation;
 
     return performSubstitution(locale, str, argObj, options);
+  }
+
+  const isObject = typeof translation === 'object' && translation !== null;
+  if (isObject) {
+    const obj: any = {};
+    const entries = Object.entries(translation)
+      .filter(([, v]) => {
+        const notValid =
+          Array.isArray(v) && v.length === 2 && typeof v[1] === 'object';
+        return !notValid;
+      })
+      .map(([k]) => {
+        return [
+          k,
+          getTranslation(locale, translations, `${key}.${k}`, {}),
+        ] as const;
+      });
+    entries.forEach(([k, v]) => {
+      obj[k] = v;
+    });
+
+    return obj;
   }
 
   return undefined;
@@ -127,10 +161,11 @@ function getTranslation(
 function getTranslationByKey(obj: Translations, key: string) {
   const keys = key.split('.');
   let currentObj: any = obj;
+  const len = keys.length - 1;
 
   let out = undefined;
 
-  for (let i = 0; i <= keys.length - 1; i++) {
+  for (let i = 0; i <= len; i++) {
     const k = keys[i];
     const newObj = currentObj[k];
     if (!newObj) return undefined;
@@ -142,6 +177,10 @@ function getTranslationByKey(obj: Translations, key: string) {
         typeof newObj[0] === 'string');
 
     if (canReturn) {
+      out = newObj;
+      break;
+    }
+    if (i === len) {
       out = newObj;
       break;
     }

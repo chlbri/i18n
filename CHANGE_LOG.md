@@ -4,6 +4,16 @@
 <br/>
 
 <details>
+<summary><h3> <strong>Version [0.1.0]</strong> &mdash; <i>2025/07/21 23:00<i/></h3></summary>
+
+- Add possiblity to use array in declaration
+- Add possiblity to translate objects, and arrays
+- ✨ Upgrade deps
+- 🧪 **100%** _coverage_
+
+</details>
+
+<details>
 <summary><h3>Version [0.0.2] &mdash; 2025/07/21 23:00</h3></summary>
 
 - Add credentials to

@@ -1,3 +1,4 @@
+import type { types } from '@bemedev/types';
 import type { Register } from '..';
 
 export type Fn<Args extends any[] = any[], R = any> = (...args: Args) => R;
@@ -73,19 +74,39 @@ export type ExtractParamOptions<S extends string> =
       : ExtractParamOptions<Rest> // If the string has no parameter type
     : unknown; // If the string has no parameters
 
-type _Translations<R> = R extends [any, any] | (infer S extends string)
-  ? [string, ExtractParamOptions<S>] | string
-  : R extends object
-    ? {
-        [K in keyof R]: _Translations<R[K]>;
-      }
-    : never;
+type _Translations<R> = R extends
+  | [infer S extends string, infer A]
+  | (infer S extends string)
+  ? ExtractParamOptions<S> extends infer E extends types.Ru
+    ?
+        | [string, E]
+        | (keyof types.NotSubTypeLow<E, undefined> extends undefined
+            ? string
+            : never)
+    : A extends string
+      ? [string, string]
+      : string
+  : R extends string[]
+    ? types.TupleOf<string, R['length']>
+    : R extends object
+      ? {
+          [K in keyof R]?: _Translations<R[K]>;
+        }
+      : never;
+
+// export type MakeSomeR<T> = {
+//   [K in keyof T]: T[K] extends Array<any>
+//     ? T[K]
+//     : T[K] extends object
+//       ? MakeSomeR<T[K]>
+//       : any;
+// };
 
 export type Translations = Partial<_Translations<RegisteredTranslations>>;
 
 type Array2 = [string, unknown];
 
-export type I18nMessage = string | Array2;
+export type I18nMessage = string | Array2 | string[];
 
 export type LanguageMessages = {
   [key: string]: I18nMessage | LanguageMessages;
@@ -102,6 +123,59 @@ export type DotPathsFor<T extends object = RegisteredTranslations> = {
     ? K
     : T[K] extends object
       ? Join<K, DotPathsFor<T[K]>>
+      : never;
+}[keyof T];
+
+type ToPaths<T = Soften, D extends string = '.', P extends string = ''> =
+  T extends Record<string, unknown>
+    ?
+        | Required<{
+            [K in keyof T]: ToPaths<T[K], D, `${P}${K & string}${D}`>;
+          }>[keyof T]
+        | {
+            path: P extends `${infer U}${D}` ? U : P;
+            type: T;
+          }
+    : {
+        path: P extends `${infer P}${D}` ? P : never;
+        type: T;
+      };
+type FromPaths<
+  T extends {
+    path: string;
+    type: unknown;
+  },
+> = {
+  [P in T['path']]: Extract<
+    T,
+    {
+      path: P;
+    }
+  >['type'];
+};
+
+type Decomposed = types.DeepNotSubType<
+  Omit<types.NotSubType<FromPaths<ToPaths>, undefined>, ''>,
+  Array2
+>;
+
+type _Soften<T = RegisteredTranslations> = {
+  [K in keyof T]: T[K] extends Array2
+    ? T[K]
+    : T[K] extends object
+      ? _Soften<T[K]>
+      : string;
+};
+
+export type Soften = _Soften;
+
+export type ByObjectKey<T extends ObjectDotKeys> = Decomposed[T];
+
+export type ObjectDotKeys<T extends object = Soften> = {
+  [K in keyof T]: T[K] extends Array2
+    ? never
+    : T[K] extends object
+      ? K | Join<K, ObjectDotKeys<T[K]>>
       : never;
 }[keyof T];
 
@@ -153,16 +227,19 @@ type NormalizedTranslationAtKeyWithParams<Key extends string> =
     TranslationAtKeyWithParams<RegisteredTranslations, Key>
   >;
 
-export type Params<S extends DotPathsFor> = ExtractParamArgs<
-  Extract<NormalizedTranslationAtKeyWithParams<S>[0], string>,
-  NormalizedTranslationAtKeyWithParams<S>[1] extends {
-    enum: infer E;
-  }
-    ? keyof E extends never
-      ? EnumMap
-      : E
-    : EnumMap
->;
+export type Params<S extends DotPathsFor> =
+  NormalizedTranslationAtKeyWithParams<S>[0] extends Array<string>
+    ? unknown
+    : ExtractParamArgs<
+        Extract<NormalizedTranslationAtKeyWithParams<S>[0], string>,
+        NormalizedTranslationAtKeyWithParams<S>[1] extends {
+          enum: infer E;
+        }
+          ? keyof E extends never
+            ? EnumMap
+            : E
+          : EnumMap
+      >;
 
 export type PathsWithParams = {
   [K in DotPathsFor]: keyof Params<K> extends never ? never : K;

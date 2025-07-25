@@ -15,6 +15,8 @@ const en = createRootTanslations(dt => ({
     greetings: dt('Hello {names:list}!', {
       list: { names: { style: 'short' } },
     }),
+    data: { lang: 'en', langs: ['fr', 'gb', 'es'] },
+    someArray: ['string1', 'string2'],
   },
 
   jerseyNumber: dt('Your number is {jersey:number}.', {
