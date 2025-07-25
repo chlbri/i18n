@@ -226,6 +226,8 @@ const translations = {
   },
 };
 
+##
+
 // Access with dot notation
 translate('app.nav.profile.edit')(); // "Edit Profile"
 ```

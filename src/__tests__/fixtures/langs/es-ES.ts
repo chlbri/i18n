@@ -16,6 +16,7 @@ const esES = createTranslations(dt => ({
     },
   ),
 
+  fdfd: '',
   inboxMessages: dt('Hola {name}, tienes {messages:plural}.', {
     plural: {
       messages: {
@@ -32,6 +33,9 @@ const esES = createTranslations(dt => ({
 
   nested: {
     greetings: '¡Hola {names:list}!',
+    data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
+
+    someArray: ['cadena1', 'cadena2'],
   },
 
   jerseyNumber: dt('Tu número es {jersey:number}.', {
@@ -41,4 +45,5 @@ const esES = createTranslations(dt => ({
   }),
 }));
 
+//cadena1
 export default esES;
