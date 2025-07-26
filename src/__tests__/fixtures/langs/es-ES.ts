@@ -34,7 +34,7 @@ const esES = createTranslations(dt => ({
   nested: {
     greetings: '¡Hola {names:list}!',
     data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
-
+    one: dt('Line {LINE} is empty', {}),
     someArray: ['cadena1', 'cadena2'],
   },
 

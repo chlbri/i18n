@@ -77,12 +77,14 @@ export type ExtractParamOptions<S extends string> =
 type _Translations<R> = R extends
   | [infer S extends string, infer A]
   | (infer S extends string)
-  ? ExtractParamOptions<S> extends infer E extends types.Ru
+  ? ExtractParamOptions<S> extends infer E
     ?
         | [string, E]
-        | (keyof types.NotSubTypeLow<E, undefined> extends undefined
-            ? string
-            : never)
+        | (E extends types.Ru
+            ? keyof types.NotSubTypeLow<E, undefined> extends undefined
+              ? string
+              : never
+            : string)
     : A extends string
       ? [string, string]
       : string
@@ -103,6 +105,8 @@ type _Translations<R> = R extends
 // };
 
 export type Translations = Partial<_Translations<RegisteredTranslations>>;
+
+// type TT = types.DeepRequired<Translations>['nested']['one']
 
 type Array2 = [string, unknown];
 
