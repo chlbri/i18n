@@ -17,6 +17,7 @@ const en = createRootTanslations(dt => ({
     }),
     data: { lang: 'en', langs: ['fr', 'gb', 'es'] },
     someArray: ['string1', 'string2'],
+    one: dt('Line {LINE} is empty', {}),
   },
 
   jerseyNumber: dt('Your number is {jersey:number}.', {
