@@ -1,8 +1,8 @@
 import { createTests } from '@bemedev/vitest-extended';
-import { translate } from './fixtures/translate';
+import { translate } from './fixtures';
 
 describe('inboxMessages', () => {
-  describe('#01 => with one meaage', () => {
+  describe('#01 => with one message', () => {
     const inboxMessages = translate('inboxMessages', {
       name: 'John',
       messages: 1,
@@ -10,10 +10,10 @@ describe('inboxMessages', () => {
 
     const { acceptation, success } = createTests(inboxMessages);
 
-    describe('#01.01 => Acceptation', acceptation);
+    describe('#01.00 => Acceptation', acceptation);
 
     describe(
-      '#01.02 => Success',
+      '#01.01 => Success',
       success(
         {
           invite: 'without args',
@@ -31,7 +31,7 @@ describe('inboxMessages', () => {
         },
         {
           invite: 'es',
-          parameters: 'es-es',
+          parameters: 'es-ES',
           expected: 'Hola John, tienes 1 mensaje.',
         },
         {
@@ -73,7 +73,7 @@ describe('inboxMessages', () => {
         },
         {
           invite: 'es',
-          parameters: 'es-es',
+          parameters: 'es-ES',
           expected: 'Hola John, tienes 5 mensajes.',
         },
         {
@@ -114,7 +114,7 @@ describe('inboxMessages', () => {
         },
         {
           invite: 'es',
-          parameters: 'es-es',
+          parameters: 'es-ES',
           expected: 'Hola John, tienes 2 mensajes.',
         },
         {

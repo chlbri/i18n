@@ -1,5 +1,5 @@
 import { createTests } from '@bemedev/vitest-extended';
-import { translate } from './fixtures/translate';
+import { translate } from './fixtures';
 
 describe('Other specific tests', () => {
   describe('#01 => Nested Data Translation', () => {
@@ -37,7 +37,7 @@ describe('Other specific tests', () => {
         },
         {
           invite: 'es',
-          parameters: 'es-es',
+          parameters: 'es-ES',
           expected: {
             lang: 'es',
             langs: expect.arrayContaining(['fr', 'gb', 'en']),
@@ -81,7 +81,7 @@ describe('Other specific tests', () => {
         },
         {
           invite: 'es',
-          parameters: 'es-es',
+          parameters: 'es-ES',
           expected: expect.arrayContaining(['cadena1', 'cadena2']),
         },
         {
@@ -119,7 +119,7 @@ describe('Other specific tests', () => {
         },
         {
           invite: 'es',
-          parameters: 'es-es',
+          parameters: 'es-ES',
           expected: expect.arrayContaining(['fr', 'gb', 'en']),
         },
         {
@@ -175,7 +175,7 @@ describe('Other specific tests', () => {
         },
         {
           invite: 'es',
-          parameters: 'es-es',
+          parameters: 'es-ES',
           expected: {
             data: {
               lang: 'es',

@@ -1,3 +1,3 @@
-export * from './i18n';
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface Register {}
+export * from './class';
+export * from './helpers';
+export * from './types';

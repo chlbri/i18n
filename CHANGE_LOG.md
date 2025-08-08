@@ -6,6 +6,18 @@
 <details>
 <summary><h3> <strong>Version [0.1.1]</strong> &mdash; <i>2025/07/26 08:25<i/></h3></summary>
 
+- BREAKING_CHANGES
+- Typings by class, not by modules
+- ✨ Upgrade deps
+- 🧪 **100%** _coverage_
+
+</details>
+
+<br/>
+
+<details>
+<summary><h3> <strong>Version [0.1.1]</strong> &mdash; <i>2025/07/26 08:25<i/></h3></summary>
+
 - Fix typings of Translations
 - ✨ Upgrade deps
 - 🧪 **100%** _coverage_
