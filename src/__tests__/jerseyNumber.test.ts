@@ -1,5 +1,5 @@
 import { createTests } from '@bemedev/vitest-extended';
-import { translate } from './fixtures/translate';
+import { translate } from './fixtures';
 
 describe('jerseyNumber', () => {
   const jerseyNumber = translate('jerseyNumber', {
@@ -28,8 +28,8 @@ describe('jerseyNumber', () => {
         expected: 'Your number is 23.00.',
       },
       {
-        invite: 'es-es',
-        parameters: 'es-es',
+        invite: 'es-ES',
+        parameters: 'es-ES',
         expected: 'Tu número es 23.',
       },
       {

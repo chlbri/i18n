@@ -1,17 +1,17 @@
 # @bemedev/i18n
 
-An elegant and typed internationalization library for JavaScript and
-TypeScript projects. This library provides a simple yet powerful way to
-handle translations and locale-specific content.
+A modern, fully-typed internationalization (i18n) library for TypeScript
+and JavaScript with a fluent, composable API. Define once, compose
+per-locale, and translate safely with strong types.
 
 ## Features
 
-- ✅ Fully typed API with TypeScript
-- ✅ Formatting support for dates, numbers, lists and more
-- ✅ Elegant plural handling
-- ✅ Typed enum support
-- ✅ Nested translation structure
-- ✅ Automatic fallback to default language
+- ✅ Strong TypeScript typing for keys and params
+- ✅ Simple, fluent API with a class-like builder
+- ✅ Formatting helpers: date, number, plural, list, enum
+- ✅ Nested structures with dot-path access
+- ✅ Locale fallback (en, en-US ➜ en)
+- ✅ Zero-deps runtime, tiny footprint
 
 <br/>
 
@@ -28,209 +28,171 @@ yarn add @bemedev/i18n
 pnpm add @bemedev/i18n
 ```
 
-## Complete Usage Guide
+## Quick start
 
-### Basic Setup
+```ts
+import { create } from '@bemedev/i18n';
 
-To start using `@bemedev/i18n`, first initialize the library with your
-translations:
-
-```typescript
-import { initI18n } from '@bemedev/i18n';
-
-// Define your translations
-const en = {
-  greetings: 'Hello {name}!',
-  dashboard: {
-    welcome: 'Welcome to your dashboard',
-    stats: 'You have {count} notifications',
-  },
-};
-
-const fr = {
-  greetings: 'Bonjour {name} !',
-  dashboard: {
-    welcome: 'Bienvenue sur votre tableau de bord',
-    stats: 'Vous avez {count} notifications',
-  },
-};
-
-// Initialize with your translations and set English as the default language
-const { translate } = initI18n({ en, fr }, 'en');
-```
-
-### Simple Usage
-
-```typescript
-// Translation without parameters
-const welcome = translate('dashboard.welcome')(); // "Welcome to your dashboard"
-
-// Translation with parameters
-const greeting = translate('greetings', { name: 'John' })(); // "Hello John!"
-
-// Translation with language change
-const greetingFr = translate('greetings', { name: 'John' }).to('fr'); // "Bonjour John !"
-```
-
-### Advanced Features
-
-#### Date Formatting
-
-```typescript
-import { dt } from '@bemedev/i18n';
-
-const messages = {
-  lastSeen: dt('Last seen: {date:date}', {
-    date: {
-      date: { dateStyle: 'full' },
+// Create a machine with a base locale and a default fallback
+const machine = create(
+  dt => ({
+    localee: 'en',
+    greetings: 'Hello {name}! Your last login was {lastLoginDate:date}.',
+    inboxMessages: dt('Hello {name}, you have {messages:plural}.', {
+      plural: { messages: { one: '1 message', other: '{?} messages' } },
+    }),
+    nested: {
+      greetings: dt('Hello {names:list}!', {
+        list: { names: { style: 'short' } },
+      }),
     },
   }),
-};
-
-// Usage
-translate('lastSeen', { date: new Date() })();
-// "Last seen: Wednesday, July 21, 2025"
-```
-
-#### Plural Handling
-
-```typescript
-const messages = {
-  items: dt('You have {count:plural} in your cart', {
-    plural: {
-      count: {
-        one: '{?} item',
-        other: '{?} items',
-      },
-    },
-  }),
-};
-
-// Usage
-translate('items', { count: 1 })(); // "You have 1 item in your cart"
-translate('items', { count: 5 })(); // "You have 5 items in your cart"
-```
-
-#### Typed Enums
-
-```typescript
-const messages = {
-  status: dt('Your order status is {status:enum}', {
-    enum: {
-      status: {
-        pending: 'awaiting processing',
-        shipped: 'on its way',
-        delivered: 'delivered',
-      },
-    },
-  }),
-};
-
-// Usage
-translate('status', { status: 'pending' })(); // "Your order status is awaiting processing"
-```
-
-#### Formatted Lists
-
-```typescript
-const messages = {
-  friends: dt('Online: {users:list}', {
-    list: {
-      users: { style: 'long', type: 'conjunction' },
-    },
-  }),
-};
-
-// Usage
-translate('friends', { users: ['Alice', 'Bob', 'Charlie'] })();
-// "Online: Alice, Bob, and Charlie"
-```
-
-### Strong Typing with TypeScript
-
-#### Extending the Register Interface
-
-The library uses a `Register` interface to ensure strong typing for your
-translations. To fully leverage TypeScript's type system, extend this
-interface with your own translation types:
-
-1. Create a type definition file for your translations:
-
-```typescript
-// translations.ts
-export const en = {
-  greetings: 'Hello {name}!',
-  dashboard: {
-    welcome: 'Welcome to your dashboard',
-    stats: 'You have {count} notifications',
-  },
-};
-
-export type Translations = typeof en;
-```
-
-2. Extend the `Register` interface in a declaration file:
-
-```typescript
-// types.d.ts or similar
-import type { Translations } from './translations';
-
-declare module '@bemedev/i18n' {
-  interface Register {
-    translations: Translations;
-  }
-}
-```
-
-Once configured, you'll benefit from full autocompletion and type checking:
-
-```typescript
-// Autocompletion for translation keys
-translate('dashboard.welcome')();
-
-// TypeScript error if the key does not exist
-translate('dashboard.nonexistent')(); // ❌ Error
-
-// Parameter validation
-translate('greetings', { name: 'John' })(); // ✅ OK
-translate('greetings')(); // ❌ Error: missing 'name' parameter
-```
-
-## Advanced Examples
-
-### Language Fallbacks
-
-```typescript
-// Define multiple fallback languages
-const { translate } = initI18n({ en, fr, 'en-US', 'en-GB' }, 'en', 'en-US');
-
-// If a translation is not available in 'en-GB',
-// it will be searched in 'en-US', then in 'en'
-```
-
-### Nested Translation Structure
-
-```typescript
-const translations = {
-  en: {
-    app: {
-      nav: {
-        home: 'Home',
-        settings: 'Settings',
-        profile: {
-          edit: 'Edit Profile',
-          view: 'View Profile',
+  'en',
+)
+  .provideTranslation('es-ES', dt => ({
+    localee: 'es-ES',
+    greetings: dt(
+      '¡Hola {name}! Tu última conexión fue el {lastLoginDate:date}.',
+      {
+        date: {
+          lastLoginDate: {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          },
         },
       },
+    ),
+  }))
+  .provideTranslation('en-US', { localee: 'en-US' });
+
+// Translate
+const msg = machine
+  .translate('greetings', {
+    name: 'John',
+    lastLoginDate: new Date('2023-10-01T12:00:00Z'),
+  })
+  .to('es-ES');
+// => "¡Hola John! Tu última conexión fue el 01/10/2023."
+```
+
+## API overview
+
+- create(config | define => config, ...fallbacks)
+  - Returns an I18n machine with methods:
+    - provideTranslation(locale, value | define => value): chain new locale
+      entries
+    - translate(key, args?).to(locale?): lazy translator returning a string
+    - translateWithLocale(locale, { key, args? }): direct translation
+      function
+    - keys: string[] of known locales
+    - translations: resolved map of locale ➜ messages
+
+### Defining translations
+
+You can write plain messages or use `dt` to attach formatting options.
+
+```ts
+const machine = create(
+  dt => ({
+    greetings: 'Hello {name}!',
+    status: dt('Order is {status:enum}', {
+      enum: { status: { pending: 'pending', shipped: 'shipped' } },
+    }),
+    lastSeen: dt('Last seen: {date:date}', {
+      date: { date: { dateStyle: 'long' } },
+    }),
+    items: dt('You have {count:plural}', {
+      plural: { count: { one: '1 item', other: '{?} items' } },
+    }),
+    friends: dt('Online: {users:list}', {
+      list: { users: { style: 'long', type: 'conjunction' } },
+    }),
+  }),
+  'en',
+);
+```
+
+### Using translate vs translateWithLocale
+
+```ts
+// Lazy: bind key/args, choose locale later
+const invite = machine.translate('greetings', { name: 'Ada' });
+invite.to('en');
+invite.to('es-ES');
+
+// Direct: provide locale immediately
+machine.translateWithLocale('en', {
+  key: 'greetings',
+  args: { name: 'Ada' },
+});
+```
+
+### Nested keys and arrays
+
+Dot-paths are supported for deep access; non-string values (objects/arrays)
+are returned as-is when defined without dt.
+
+```ts
+const m = create(
+  {
+    nested: {
+      data: { lang: 'en', langs: ['fr', 'gb', 'es'] },
+      someArray: ['string1', 'string2'],
     },
   },
-};
+  'en',
+);
 
-##
-
-// Access with dot notation
-translate('app.nav.profile.edit')(); // "Edit Profile"
+m.translate('nested.data').to('en'); // => { lang: 'en', langs: ['fr','gb','es'] }
+m.translate('nested.someArray').to('en'); // => ['string1', 'string2']
 ```
+
+## Type safety
+
+Types are inferred from your config and preserved per-locale.
+
+```ts
+// Keys and params are type-checked
+machine.translate('greetings', {
+  name: 'John',
+  lastLoginDate: new Date(),
+}); // ✅
+machine.translate('greetings'); // ❌ missing 'name'
+machine.translate('unknown.key'); // ❌ unknown key
+
+// Locales are narrowed from machine.keys
+const call = machine.translate('greetings', { name: 'A' }).to;
+// call: (locale?: 'en' | 'es-ES' | 'en-US') => string
+```
+
+If you want to re-use the machine’s internal types, utility types are
+provided:
+
+```ts
+import type {
+  ConfigFrom,
+  KeysFrom,
+  KeyFrom, // @deprecated – internal typing only
+  TranslationsFrom,
+  TranslationFrom, // @deprecated – internal typing only
+} from '@bemedev/i18n/class';
+```
+
+Note: properties prefixed by ** (like `**key`, `\_\_translation`) are
+marked as deprecated and exist only to carry types. Don’t use them at
+runtime.
+
+## Migration from initI18n (functional API)
+
+- Previous: `initI18n({ en, fr }, 'en')` returning
+  `{ translate, translateWithLocale }`
+- Now: use `create(config, 'en').provideTranslation('fr', frConfig)`
+- Translation calls `translate(...).to(locale)` and
+  `translateWithLocale(locale, { key, args })` remain conceptually the
+  same.
+
+---
 
 ## Licence
 

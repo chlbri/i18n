@@ -1,5 +1,5 @@
 import { createTests } from '@bemedev/vitest-extended';
-import { translate, translateWithLocale } from './fixtures/translate';
+import { translate, translateWithLocale } from './fixtures';
 
 describe('nested.greetings', () => {
   const args = {
@@ -30,7 +30,7 @@ describe('nested.greetings', () => {
       },
       {
         invite: 'es',
-        parameters: 'es-es',
+        parameters: 'es-ES',
         expected: '¡Hola John, Jane y Bob!',
       },
       {
@@ -55,8 +55,8 @@ describe('nested.greetings', () => {
           expected: 'Hello John, Jane, & Bob!',
         },
         {
-          invite: 'es-es',
-          parameters: ['es-es', { key: 'nested.greetings', args }],
+          invite: 'es-ES',
+          parameters: ['es-ES', { key: 'nested.greetings', args }],
           expected: '¡Hola John, Jane y Bob!',
         },
       ),
@@ -92,7 +92,7 @@ describe('nested.greetings with single name', () => {
       },
       {
         invite: 'es',
-        parameters: 'es-es',
+        parameters: 'es-ES',
         expected: '¡Hola John!',
       },
       {

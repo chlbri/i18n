@@ -1,118 +1,40 @@
-import { addFn } from './helpers';
 import type {
-  ByObjectKey,
+  ExtractParamOptions,
+  Fn,
   LanguageMessages,
-  ObjectDotKeys,
   ParamOptions,
-  Params,
-  PathsWithNoParams,
-  PathsWithParams,
-  Translations,
 } from './types';
 
-export type ReturnTranslate1<T> = {
-  (locale?: Extract<keyof T, string>): string;
-  to: (locale?: Extract<keyof T, string>) => string;
-};
-
-export type Translate_F<
-  T extends Record<Lowercase<string>, Translations>,
-> = {
-  <S extends PathsWithNoParams>(key: S): ReturnTranslate1<T>;
-  <S extends PathsWithParams, A extends Params<S>>(
-    key: S,
-    args: A,
-  ): ReturnTranslate1<T>;
-  <S extends ObjectDotKeys>(
-    key: S,
-  ): {
-    (locale?: Extract<keyof T, string>): ByObjectKey<S>;
-    to: (locale?: Extract<keyof T, string>) => ByObjectKey<S>;
-  };
-};
-
-export type Paths<K extends keyof Translations = keyof Translations> =
-  K extends PathsWithParams
-    ? { key: PathsWithParams; args: Params<K> }
-    : { key: PathsWithNoParams } | PathsWithNoParams;
-
-export type TranslateWithLocale_F<
-  T extends Record<Lowercase<string>, LanguageMessages>,
-> = (locale: Extract<keyof T, string>, args: Paths) => string;
-
-export const initI18n = <
-  const T extends Record<Lowercase<string>, LanguageMessages>,
-  K extends Extract<keyof T, string> = Extract<keyof T, string>,
+export const defineTranslation = <
+  S extends string,
+  O extends ExtractParamOptions<S>,
 >(
-  translations: T,
-  ...fallbacks: K[]
-) => {
-  const translateWithLocale: TranslateWithLocale_F<T> = (
-    locale,
-    values,
-  ) => {
-    const orderedLocales = new Set([
-      ...getOrderedLocaleAndParentLocales(locale),
-      ...fallbacks.flatMap(getOrderedLocaleAndParentLocales),
-    ]);
-
-    let out1 = '';
-
-    for (const locale of orderedLocales) {
-      const translationFile = translations[locale as keyof T];
-      if (translationFile == null) continue;
-      const _values: any =
-        typeof values === 'string' ? { key: values, args: {} } : values;
-
-      const translation = getTranslation(
-        locale,
-        translationFile as any,
-        _values.key,
-        _values.args,
-      );
-      if (translation) {
-        out1 = translation;
-        break;
-      }
-    }
-
-    return out1;
-  };
-
-  //@ts-expect-error for build
-  const translate: Translate_F<T> = (key, args) => {
-    const to = (locale: K) => {
-      return translateWithLocale(locale, {
-        key,
-        args,
-      } as Paths);
-    };
-
-    const out = addFn(to, { to });
-
-    return out;
-  };
-
-  return {
-    translate,
-    translateWithLocale,
-  };
+  string: S,
+  options: O,
+): [S, O] => {
+  return [string, options];
 };
 
-function getOrderedLocaleAndParentLocales(locale?: string) {
-  const locales: string[] = [];
-  if (typeof locale !== 'string') return locales;
-  let parentLocale = locale;
-  while (parentLocale !== '') {
-    locales.push(parentLocale);
-    parentLocale = parentLocale.replace(/-?[^-]+$/, '');
-  }
-  return locales;
-}
+export const dt = defineTranslation;
 
-function getTranslation(
+export type FnBasic<Main extends Fn, Tr extends object> = Tr & Main;
+
+export const addFn = <Main extends Fn, const Tr extends object = object>(
+  main: Main,
+  extensions?: Tr,
+): FnBasic<Main, Tr> => {
+  const out: any = main;
+
+  if (extensions) {
+    Object.assign(out, extensions);
+  }
+
+  return out;
+};
+
+export function getTranslation(
   locale: string,
-  translations: Translations,
+  translations: LanguageMessages,
   key: string,
   args?: any,
 ) {
@@ -158,7 +80,7 @@ function getTranslation(
   return undefined;
 }
 
-function getTranslationByKey(obj: Translations, key: string) {
+function getTranslationByKey(obj: LanguageMessages, key: string) {
   const keys = key.split('.');
   let currentObj: any = obj;
   const len = keys.length - 1;
@@ -253,3 +175,14 @@ function performSubstitution(
     }
   }, str);
 }
+
+export const createConfig = <const R extends LanguageMessages>(
+  func: ((define: typeof defineTranslation) => R) | R,
+) => {
+  const isFunction = typeof func === 'function';
+  let config: R;
+  if (isFunction) config = func(defineTranslation);
+  else config = func;
+
+  return config;
+};
