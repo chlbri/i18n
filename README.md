@@ -198,17 +198,20 @@ runtime.
 
 MIT
 
-## CHANGE_LOG
+## _[CHANGE_LOG](https://github.com/chlbri/i18n/blob/main/CHANGE_LOG.md)_
 
-<details>
+<br/>
 
-<summary>
-...
-</summary>
+## Acknowledgements
 
-[CHANGELOG](https://github.com/chlbri/i18n/blob/main/CHANGE_LOG.md)
+Special thanks to all contributors, testers, and users who provided
+feedback and helped improve this library. Your support and suggestions are
+greatly appreciated!
 
-</details>
+#### This was inspired by [Web Dev Simplified](https://www.youtube.com/@WebDevSimplified)
+
+The Youtube video that inspired this library can be found
+[here](https://www.youtube.com/watch?v=VbZVx13b2oY).
 
 <br/>
 
@@ -217,13 +220,6 @@ MIT
 chlbri (bri_lvi@icloud.com)
 
 <br/>
-
-## Inspired by
-
-[Web Dev Simplified](https://www.youtube.com/@WebDevSimplified)
-
-The Youtube video that inspired this library can be found
-[here](https://www.youtube.com/watch?v=VbZVx13b2oY).
 
 [My github](https://github.com/chlbri?tab=repositories)
 
