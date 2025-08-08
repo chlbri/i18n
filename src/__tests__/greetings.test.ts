@@ -1,5 +1,5 @@
 import { createTests } from '@bemedev/vitest-extended';
-import { translate } from './fixtures/translate';
+import { translate } from './fixtures';
 
 describe('greetings', () => {
   const greetings = translate('greetings', {
@@ -29,8 +29,13 @@ describe('greetings', () => {
         expected: 'Hello John! Your last login was 10/1/2023.',
       },
       {
+        invite: 'en-US, will fallback to "en", because not defs',
+        parameters: 'en-US',
+        expected: 'Hello John! Your last login was 10/1/2023.',
+      },
+      {
         invite: 'es',
-        parameters: 'es-es',
+        parameters: 'es-ES',
         expected: '¡Hola John! Tu última conexión fue el 01/10/2023.',
       },
       {

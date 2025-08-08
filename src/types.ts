@@ -1,5 +1,5 @@
+import { Decompose } from '@bemedev/decompose';
 import type { types } from '@bemedev/types';
-import type { Register } from '..';
 
 export type Fn<Args extends any[] = any[], R = any> = (...args: Args) => R;
 
@@ -10,14 +10,6 @@ type StateValeMap = {
 export type StateValue = string | StateValeMap;
 
 export type SoA<T> = T | T[];
-
-export type RegisteredTranslations = Register extends {
-  translations: infer T;
-}
-  ? T extends infer Translations
-    ? Translations
-    : never
-  : LanguageMessages;
 
 export type Keys = keyof any;
 
@@ -74,7 +66,7 @@ export type ExtractParamOptions<S extends string> =
       : ExtractParamOptions<Rest> // If the string has no parameter type
     : unknown; // If the string has no parameters
 
-type _Translations<R> = R extends
+export type _Translations<R> = R extends
   | [infer S extends string, infer A]
   | (infer S extends string)
   ? ExtractParamOptions<S> extends infer E
@@ -104,8 +96,6 @@ type _Translations<R> = R extends
 //       : any;
 // };
 
-export type Translations = Partial<_Translations<RegisteredTranslations>>;
-
 // type TT = types.DeepRequired<Translations>['nested']['one']
 
 type Array2 = [string, unknown];
@@ -122,7 +112,7 @@ type Join<K, P> = K extends string
     : never
   : never;
 
-export type DotPathsFor<T extends object = RegisteredTranslations> = {
+export type DotPathsFor<T extends object> = {
   [K in keyof T]: T[K] extends I18nMessage
     ? K
     : T[K] extends object
@@ -130,40 +120,7 @@ export type DotPathsFor<T extends object = RegisteredTranslations> = {
       : never;
 }[keyof T];
 
-type ToPaths<T = Soften, D extends string = '.', P extends string = ''> =
-  T extends Record<string, unknown>
-    ?
-        | Required<{
-            [K in keyof T]: ToPaths<T[K], D, `${P}${K & string}${D}`>;
-          }>[keyof T]
-        | {
-            path: P extends `${infer U}${D}` ? U : P;
-            type: T;
-          }
-    : {
-        path: P extends `${infer P}${D}` ? P : never;
-        type: T;
-      };
-type FromPaths<
-  T extends {
-    path: string;
-    type: unknown;
-  },
-> = {
-  [P in T['path']]: Extract<
-    T,
-    {
-      path: P;
-    }
-  >['type'];
-};
-
-type Decomposed = types.DeepNotSubType<
-  Omit<types.NotSubType<FromPaths<ToPaths>, undefined>, ''>,
-  Array2
->;
-
-type _Soften<T = RegisteredTranslations> = {
+export type _Soften<T> = {
   [K in keyof T]: T[K] extends Array2
     ? T[K]
     : T[K] extends object
@@ -171,15 +128,13 @@ type _Soften<T = RegisteredTranslations> = {
       : string;
 };
 
-export type Soften = _Soften;
+// export type Soften = _Soften;
 
-export type ByObjectKey<T extends ObjectDotKeys> = Decomposed[T];
-
-export type ObjectDotKeys<T extends object = Soften> = {
+export type _ObjectDotKeys<T> = {
   [K in keyof T]: T[K] extends Array2
     ? never
     : T[K] extends object
-      ? K | Join<K, ObjectDotKeys<T[K]>>
+      ? K | Join<K, _ObjectDotKeys<T[K]>>
       : never;
 }[keyof T];
 
@@ -226,17 +181,25 @@ type TranslationAtKeyWithParams<
 
 type NormalizedTranslationAtKey<T> = T extends Array2 ? T : [T, Array2[1]];
 
-type NormalizedTranslationAtKeyWithParams<Key extends string> =
-  NormalizedTranslationAtKey<
-    TranslationAtKeyWithParams<RegisteredTranslations, Key>
-  >;
+type NormalizedTranslationAtKeyWithParams<
+  Translations,
+  Key extends string,
+> = NormalizedTranslationAtKey<
+  TranslationAtKeyWithParams<Translations, Key>
+>;
 
-export type Params<S extends DotPathsFor> =
-  NormalizedTranslationAtKeyWithParams<S>[0] extends Array<string>
+export type _Params<Translations, S extends string> =
+  NormalizedTranslationAtKeyWithParams<
+    Translations,
+    S
+  >[0] extends Array<string>
     ? unknown
     : ExtractParamArgs<
-        Extract<NormalizedTranslationAtKeyWithParams<S>[0], string>,
-        NormalizedTranslationAtKeyWithParams<S>[1] extends {
+        Extract<
+          NormalizedTranslationAtKeyWithParams<Translations, S>[0],
+          string
+        >,
+        NormalizedTranslationAtKeyWithParams<Translations, S>[1] extends {
           enum: infer E;
         }
           ? keyof E extends never
@@ -245,10 +208,62 @@ export type Params<S extends DotPathsFor> =
           : EnumMap
       >;
 
-export type PathsWithParams = {
-  [K in DotPathsFor]: keyof Params<K> extends never ? never : K;
-}[DotPathsFor];
+type PathsWithParams<T extends object> =
+  DotPathsFor<T> extends infer D extends string
+    ? {
+        [K in D]: keyof _Params<T, Extract<K, string>> extends never
+          ? never
+          : K;
+      } extends infer P
+      ? { [key in keyof P]: P[key] }[keyof P]
+      : never
+    : never;
 
-export type PathsWithNoParams = {
-  [K in DotPathsFor]: keyof Params<K> extends never ? K : never;
-}[DotPathsFor];
+type PathsWithNoParams<T extends object> =
+  DotPathsFor<T> extends infer D extends string
+    ? {
+        [K in D]: keyof _Params<T, Extract<K, string>> extends never
+          ? K
+          : never;
+      } extends infer P
+      ? { [key in keyof P]: P[key] }[keyof P]
+      : never
+    : never;
+
+export type Paths<
+  T extends object,
+  K extends Extract<keyof T, string> = Extract<keyof T, string>,
+> =
+  K extends PathsWithParams<T>
+    ? { key: PathsWithParams<T>; args: _Params<T, K> }
+    :
+        | { key: PathsWithNoParams<T>; args: _Params<T, K> }
+        | PathsWithNoParams<T>;
+
+type ReturnTranslate1<S extends string> = {
+  (locale?: S): string;
+  to: (locale?: S) => string;
+};
+
+type ArrayKey = `${string}[${number}]${string}`;
+
+export type Translate_F<
+  R extends LanguageMessages,
+  Keys extends string,
+  D = Decompose<R, { start: false; object: 'object'; sep: '.' }>,
+  KS extends keyof D = Exclude<keyof D, ArrayKey>,
+> = {
+  <S extends PathsWithNoParams<R>>(key: S): ReturnTranslate1<Keys>;
+  <S extends PathsWithParams<R>, A extends _Params<R, S>>(
+    key: S,
+    args: A,
+  ): ReturnTranslate1<Keys>;
+  <S extends KS>(
+    key: S,
+  ): {
+    (locale?: Keys): D[S];
+    to: (locale?: Keys) => D[S];
+  };
+};
+
+export type KeyU<S extends types.Keys> = Record<S, unknown>;

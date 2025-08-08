@@ -1,5 +1,5 @@
 import { createTests } from '@bemedev/vitest-extended';
-import { translate, translateWithLocale } from './fixtures/translate';
+import { translate, translateWithLocale } from './fixtures';
 
 describe('localee', () => {
   const localee = translate('localee').to;
@@ -22,12 +22,12 @@ describe('localee', () => {
       },
       {
         invite: 'en-us',
-        parameters: 'en-us',
+        parameters: 'en-US',
         expected: 'en-US',
       },
       {
         invite: 'es',
-        parameters: 'es-es',
+        parameters: 'es-ES',
         expected: 'es-ES',
       },
       {
@@ -53,12 +53,12 @@ describe('localee', () => {
         },
         {
           invite: 'en-us',
-          parameters: ['en-us', 'localee'],
+          parameters: ['en-US', 'localee'],
           expected: 'en-US',
         },
         {
-          invite: 'es-es',
-          parameters: ['es-es', 'localee'],
+          invite: 'es-ES',
+          parameters: ['es-ES', 'localee'],
           expected: 'es-ES',
         },
       ),

@@ -15,6 +15,11 @@ export default defineConfig({
     slowTestThreshold: 3000,
     globals: true,
     logHeapUsage: true,
+    typecheck: {
+      enabled: true,
+      only: false,
+      ignoreSourceErrors: false,
+    },
     coverage: {
       enabled: true,
       extension: 'ts',
