@@ -26,7 +26,7 @@ describe('inboxMessages', () => {
         },
         {
           invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us',
+          parameters: 'en-us' as any,
           expected: 'Hello John, you have 1 message.',
         },
         {
@@ -36,7 +36,7 @@ describe('inboxMessages', () => {
         },
         {
           invite: 'not-exists => en',
-          parameters: 'not-exists',
+          parameters: 'not-exists' as any,
           expected: 'Hello John, you have 1 message.',
         },
       ),
@@ -68,7 +68,7 @@ describe('inboxMessages', () => {
         },
         {
           invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us',
+          parameters: 'en-us' as any,
           expected: 'Hello John, you have 5 messages.',
         },
         {
@@ -78,7 +78,7 @@ describe('inboxMessages', () => {
         },
         {
           invite: 'not-exists => en',
-          parameters: 'not-exists',
+          parameters: 'not-exists' as any,
           expected: 'Hello John, you have 5 messages.',
         },
       ),
@@ -109,7 +109,7 @@ describe('inboxMessages', () => {
         },
         {
           invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us',
+          parameters: 'en-us' as any,
           expected: 'Hello John, you have 2 messages.',
         },
         {
@@ -119,8 +119,49 @@ describe('inboxMessages', () => {
         },
         {
           invite: 'not-exists => en',
-          parameters: 'not-exists',
+          parameters: 'not-exists' as any,
           expected: 'Hello John, you have 2 messages.',
+        },
+      ),
+    );
+  });
+
+  describe('#04 => with zero messages', () => {
+    const inboxMessages = translate('inboxMessages', {
+      name: 'John',
+      messages: 0,
+    }).to;
+
+    const { acceptation, success } = createTests(inboxMessages);
+
+    describe('#04.01 => Acceptation', acceptation);
+
+    describe(
+      '#04.02 => Success',
+      success(
+        {
+          invite: 'without args',
+          expected: 'Hello John, you have 0 messages.',
+        },
+        {
+          invite: 'en',
+          parameters: 'en',
+          expected: 'Hello John, you have 0 messages.',
+        },
+        {
+          invite: 'en-us, will fallback to "en", because not defs',
+          parameters: 'en-us' as any,
+          expected: 'Hello John, you have 0 messages.',
+        },
+        {
+          invite: 'es',
+          parameters: 'es-ES',
+          expected: 'Hola John, tienes 0 mensajes.',
+        },
+        {
+          invite: 'not-exists => en',
+          parameters: 'not-exists' as any,
+          expected: 'Hello John, you have 0 messages.',
         },
       ),
     );

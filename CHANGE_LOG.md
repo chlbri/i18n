@@ -4,7 +4,16 @@
 <br/>
 
 <details>
-<summary><h3> <strong>Version [0.1.1]</strong> &mdash; <i>2025/07/26 08:25<i/></h3></summary>
+<summary><h3> <strong>Version [0.3.0]</strong> &mdash; <i>2025/09/21 22:15<i/></h3></summary>
+
+- Add function translationFrom to not copy all translations, just,
+  following the types
+- 🧪 **100%** _coverage_
+
+</details>
+
+<details>
+<summary><h3> <strong>Version [0.2.1]</strong> &mdash; <i>2025/07/26 08:25<i/></h3></summary>
 
 - BREAKING_CHANGES
 - Typings by class, not by modules

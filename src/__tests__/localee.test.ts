@@ -32,7 +32,7 @@ describe('localee', () => {
       },
       {
         invite: 'not-exists => en',
-        parameters: 'not-exists',
+        parameters: 'not-exists' as any,
         expected: 'en',
       },
     ),

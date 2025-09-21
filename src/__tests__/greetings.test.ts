@@ -25,7 +25,7 @@ describe('greetings', () => {
       },
       {
         invite: 'en-us, will fallback to "en", because not defs',
-        parameters: 'en-us',
+        parameters: 'en-us' as any,
         expected: 'Hello John! Your last login was 10/1/2023.',
       },
       {
@@ -40,7 +40,7 @@ describe('greetings', () => {
       },
       {
         invite: 'not-exists => en',
-        parameters: 'not-exists',
+        parameters: 'not-exists' as any,
         expected: 'Hello John! Your last login was 10/1/2023.',
       },
     ),

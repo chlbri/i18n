@@ -29,7 +29,7 @@ describe('Other specific tests', () => {
         },
         {
           invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us',
+          parameters: 'en-us' as any,
           expected: {
             lang: 'en',
             langs: expect.arrayContaining(['fr', 'gb', 'es']),
@@ -39,13 +39,13 @@ describe('Other specific tests', () => {
           invite: 'es',
           parameters: 'es-ES',
           expected: {
-            lang: 'es',
+            lang: 'es' as any,
             langs: expect.arrayContaining(['fr', 'gb', 'en']),
           },
         },
         {
           invite: 'not-exists => en',
-          parameters: 'not-exists',
+          parameters: 'not-exists' as any,
           expected: {
             lang: 'en',
             langs: expect.arrayContaining(['fr', 'gb', 'es']),
@@ -76,7 +76,7 @@ describe('Other specific tests', () => {
         },
         {
           invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us',
+          parameters: 'en-us' as any,
           expected: expect.arrayContaining(['string1', 'string2']),
         },
         {
@@ -86,7 +86,7 @@ describe('Other specific tests', () => {
         },
         {
           invite: 'not-exists => en',
-          parameters: 'not-exists',
+          parameters: 'not-exists' as any,
           expected: expect.arrayContaining(['string1', 'string2']),
         },
       ),
@@ -114,7 +114,7 @@ describe('Other specific tests', () => {
         },
         {
           invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us',
+          parameters: 'en-us' as any,
           expected: expect.arrayContaining(['fr', 'gb', 'es']),
         },
         {
@@ -124,7 +124,7 @@ describe('Other specific tests', () => {
         },
         {
           invite: 'not-exists => en',
-          parameters: 'not-exists',
+          parameters: 'not-exists' as any,
           expected: expect.arrayContaining(['fr', 'gb', 'es']),
         },
       ),
@@ -149,7 +149,7 @@ describe('Other specific tests', () => {
               langs: expect.arrayContaining(['fr', 'gb', 'es']),
             },
             someArray: expect.arrayContaining(['string1', 'string2']),
-          },
+          } as any,
         },
         {
           invite: 'en',
@@ -160,18 +160,18 @@ describe('Other specific tests', () => {
               langs: expect.arrayContaining(['fr', 'gb', 'es']),
             },
             someArray: expect.arrayContaining(['string1', 'string2']),
-          },
+          } as any,
         },
         {
           invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us',
+          parameters: 'en-us' as any,
           expected: {
             data: {
               lang: 'en',
               langs: expect.arrayContaining(['fr', 'gb', 'es']),
             },
             someArray: expect.arrayContaining(['string1', 'string2']),
-          },
+          } as any,
         },
         {
           invite: 'es',
@@ -183,18 +183,18 @@ describe('Other specific tests', () => {
             },
             greetings: '¡Hola {names:list}!',
             someArray: expect.arrayContaining(['cadena1', 'cadena2']),
-          },
+          } as any,
         },
         {
           invite: 'not-exists => en',
-          parameters: 'not-exists',
+          parameters: 'not-exists' as any,
           expected: {
             data: {
               lang: 'en',
               langs: expect.arrayContaining(['fr', 'gb', 'es']),
             },
             someArray: expect.arrayContaining(['string1', 'string2']),
-          },
+          } as any,
         },
       ),
     );

@@ -8,7 +8,6 @@
     "sourceMap": true,
     "rootDir": "./src",
     "outDir": "./lib",
-    "resolveJsonModule": true,
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

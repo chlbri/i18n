@@ -24,7 +24,7 @@ describe('jerseyNumber', () => {
       },
       {
         invite: 'en-us',
-        parameters: 'en-us',
+        parameters: 'en-US',
         expected: 'Your number is 23.00.',
       },
       {
@@ -34,7 +34,7 @@ describe('jerseyNumber', () => {
       },
       {
         invite: 'not-exists => en',
-        parameters: 'not-exists',
+        parameters: 'not-exists' as any,
         expected: 'Your number is 23.00.',
       },
     ),
