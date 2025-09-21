@@ -183,16 +183,67 @@ Note: properties prefixed by ** (like `**key`, `\_\_translation`) are
 marked as deprecated and exist only to carry types. Don’t use them at
 runtime.
 
-## Migration from initI18n (functional API)
-
-- Previous: `initI18n({ en, fr }, 'en')` returning
-  `{ translate, translateWithLocale }`
-- Now: use `create(config, 'en').provideTranslation('fr', frConfig)`
-- Translation calls `translate(...).to(locale)` and
-  `translateWithLocale(locale, { key, args })` remain conceptually the
-  same.
-
 ---
+
+## NB:
+
+If you want to create a new translation based on an existing one, but only
+use types, not full object use `translationFrom`
+
+```ts
+import { translationFrom } from '@bemedev/i18n';
+
+const translate = translationFrom({
+  greeting: 'Hello',
+  farewell: 'Goodbye',
+  withParam: 'Hello {name}!',
+  nested: {
+    welcome: 'Welcome back',
+    deep: {
+      message: 'Deep message',
+    },
+  },
+});
+
+describe('#01 => should translate simple keys', () => {
+  test('#01 => greeting key', () => {
+    expect(translate('greeting')).toBe('Hello');
+  });
+
+  test('#02 => farewell key', () => {
+    expect(translate('farewell')).toBe('Goodbye');
+  });
+});
+
+test('#02 => should translate with parameters', () => {
+  expect(translate('withParam', { name: 'John' })).toBe('Hello John!');
+});
+```
+
+or with a default fallback config
+
+```ts
+import { translationFrom } from '@bemedev/i18n';
+
+const rootConfig = {
+  greeting: 'Hello',
+  user: {
+    name: 'Default User',
+  },
+} as const;
+
+const translate = translationFrom.complete(rootConfig, {
+  greeting: 'Bonjour',
+});
+
+test('#01 => overridden greeting translation', () => {
+  expect(translate('greeting')).toBe('Bonjour');
+});
+
+test('#02 => fallback to root config for user name', () => {
+  expect(translate('user.name')).toBe('Default User'); // Should access root config
+});
+```
 
 ## Licence
 

@@ -4,7 +4,7 @@ import { translate, translateWithLocale } from './fixtures';
 describe('nested.greetings', () => {
   const args = {
     names: ['John', 'Jane', 'Bob'],
-  };
+  } as any;
   const nestedGreetings = translate('nested.greetings', args).to;
 
   const { acceptation, success } = createTests(nestedGreetings);
@@ -25,7 +25,7 @@ describe('nested.greetings', () => {
       },
       {
         invite: 'en-us, will fallback to "en", because not defs',
-        parameters: 'en-us',
+        parameters: 'en-us' as any,
         expected: 'Hello John, Jane, & Bob!',
       },
       {
@@ -35,7 +35,7 @@ describe('nested.greetings', () => {
       },
       {
         invite: 'not-exists => en',
-        parameters: 'not-exists',
+        parameters: 'not-exists' as any,
         expected: 'Hello John, Jane, & Bob!',
       },
     ),
@@ -87,7 +87,7 @@ describe('nested.greetings with single name', () => {
       },
       {
         invite: 'en-us, will fallback to "en", because not defs',
-        parameters: 'en-us',
+        parameters: 'en-us' as any,
         expected: 'Hello John!',
       },
       {
@@ -97,7 +97,7 @@ describe('nested.greetings with single name', () => {
       },
       {
         invite: 'not-exists => en',
-        parameters: 'not-exists',
+        parameters: 'not-exists' as any,
         expected: 'Hello John!',
       },
     ),

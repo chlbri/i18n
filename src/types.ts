@@ -266,4 +266,17 @@ export type Translate_F<
   };
 };
 
+export type Translate_F2<
+  R extends LanguageMessages,
+  D = Decompose<R, { start: false; object: 'object'; sep: '.' }>,
+  KS extends keyof D = Exclude<keyof D, ArrayKey>,
+> = {
+  <S extends PathsWithNoParams<R>>(key: S): string;
+  <S extends PathsWithParams<R>, A extends _Params<R, S>>(
+    key: S,
+    args: A,
+  ): string;
+  <S extends KS>(key: S): string;
+};
+
 export type KeyU<S extends types.Keys> = Record<S, unknown>;
