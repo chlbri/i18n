@@ -132,7 +132,10 @@ describe('Other specific tests', () => {
   });
 
   describe('#04 => Complex, "nested" key', () => {
-    const func = translate('nested').to;
+    const func = translate('nested', {
+      'nested.one': { LINE: 'string' },
+      'nested.greetings': { names: ['Alfred'] },
+    }).to;
 
     const { acceptation, success } = createTests(func);
 
@@ -148,6 +151,8 @@ describe('Other specific tests', () => {
               lang: 'en',
               langs: expect.arrayContaining(['fr', 'gb', 'es']),
             },
+            greetings: 'Hello Alfred!',
+            one: 'Line string is empty',
             someArray: expect.arrayContaining(['string1', 'string2']),
           } as any,
         },
@@ -159,6 +164,8 @@ describe('Other specific tests', () => {
               lang: 'en',
               langs: expect.arrayContaining(['fr', 'gb', 'es']),
             },
+            greetings: 'Hello Alfred!',
+            one: 'Line string is empty',
             someArray: expect.arrayContaining(['string1', 'string2']),
           } as any,
         },
@@ -170,6 +177,8 @@ describe('Other specific tests', () => {
               lang: 'en',
               langs: expect.arrayContaining(['fr', 'gb', 'es']),
             },
+            greetings: 'Hello Alfred!',
+            one: 'Line string is empty',
             someArray: expect.arrayContaining(['string1', 'string2']),
           } as any,
         },
@@ -181,7 +190,8 @@ describe('Other specific tests', () => {
               lang: 'es',
               langs: expect.arrayContaining(['fr', 'gb', 'en']),
             },
-            greetings: '¡Hola {names:list}!',
+            greetings: '¡Hola Alfred!',
+            one: 'La línea string está vacía',
             someArray: expect.arrayContaining(['cadena1', 'cadena2']),
           } as any,
         },
@@ -193,6 +203,8 @@ describe('Other specific tests', () => {
               lang: 'en',
               langs: expect.arrayContaining(['fr', 'gb', 'es']),
             },
+            greetings: 'Hello Alfred!',
+            one: 'Line string is empty',
             someArray: expect.arrayContaining(['string1', 'string2']),
           } as any,
         },

@@ -44,10 +44,10 @@ translation.derived = <const R extends LanguageMessages>(
     | RequiredTranslations<R>,
   locale = 'en-US',
 ) => {
-  return translation(func, locale);
+  return translation<R>(func as any, locale);
 };
 
 translation.fromMachine = <const T extends Simple18>(
   func: ((define: typeof defineTranslation) => infer18<T>) | infer18<T>,
   locale = 'en-US',
-) => translation(func, locale);
+) => translation<T['config']>(func, locale);

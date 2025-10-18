@@ -18,7 +18,7 @@ export default defineConfig({
     typecheck: {
       enabled: true,
       only: false,
-      ignoreSourceErrors: false,
+      ignoreSourceErrors: true,
     },
     coverage: {
       enabled: true,

@@ -28,6 +28,12 @@ export const addFn = <Main extends Fn, const Tr extends object = object>(
   return out;
 };
 
+export const innerArgs = (translation: any, KEY: string, args?: any) => {
+  const isCustom = translation instanceof CustomMessage;
+  const arg = isCustom ? args?.[KEY] : {};
+  return arg;
+};
+
 export function getTranslation(
   locale: string,
   translations: LanguageMessages,
@@ -43,28 +49,39 @@ export function getTranslation(
 
   if (translation instanceof CustomMessage) {
     const { translate, args } = translation;
+
     return performSubstitution(locale, translate, argObj, args);
   }
 
   if (Array.isArray(translation)) {
-    return translation
-      .filter(t => !(t instanceof CustomMessage))
-      .map((_, index) =>
-        getTranslation(locale, translations, `${key}.[${index}]`, args),
+    return translation.map((t, index) => {
+      const KEY = `${key}.[${index}]`;
+
+      return getTranslation(
+        locale,
+        translations,
+        KEY,
+        innerArgs(t, KEY, args),
       );
+    });
   }
 
   const isObject = typeof translation === 'object' && translation !== null;
   if (isObject) {
     const obj: any = {};
-    const entries = Object.entries(translation)
-      .filter(([, t]) => !(t instanceof CustomMessage))
-      .map(([k]) => {
-        return [
-          k,
-          getTranslation(locale, translations, `${key}.${k}`, {}),
-        ] as const;
-      });
+    const entries = Object.entries(translation).map(([k, t]) => {
+      const KEY = `${key}.${k}`;
+
+      const value = getTranslation(
+        locale,
+        translations,
+        KEY,
+        innerArgs(t, KEY, args),
+      );
+
+      return [k, value] as const;
+    });
+
     entries.forEach(([k, v]) => {
       obj[k] = v;
     });
@@ -75,14 +92,24 @@ export function getTranslation(
   return undefined;
 }
 
-function getTranslationByKey(obj: LanguageMessages, key: string) {
+/**
+ * Retrieves a translation value from a nested language messages object by flattening it and accessing the specified key.
+ *
+ * Use {@link decompose.low}
+ *
+ * @param obj - The language messages object to search in, typically a nested structure of translations.
+ * @param key - The dot-separated key path to the desired translation (e.g., "section.subsection.key").
+ * @returns The translation value associated with the key, or undefined if not found.
+ */
+const getTranslationByKey = (obj: LanguageMessages, key: string) => {
   const decomposed = decompose.low(obj, {
     start: false,
     object: 'both',
     sep: '.',
   });
+
   return decomposed[key];
-}
+};
 
 function performSubstitution(
   locale: string,

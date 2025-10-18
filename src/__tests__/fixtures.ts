@@ -68,9 +68,9 @@ export const machine = create(
     }),
 
     nested: {
-      greetings: '¡Hola {names:list}!',
+      greetings: dt('¡Hola {names:list}!'),
       data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
-      one: dt('Line {LINE} is empty', {}),
+      one: dt('La línea {LINE} está vacía'),
       someArray: ['cadena1', 'cadena2'],
     },
 

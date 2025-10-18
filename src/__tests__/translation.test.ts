@@ -245,7 +245,7 @@ describe('#02 => translation.derived', () => {
       }),
 
       nested: {
-        greetings: '¡Hola {names:list}!',
+        greetings: dt('¡Hola {names:list}!'),
         data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
         one: dt('Line {LINE} is empty', {}),
         someArray: ['cadena1', 'cadena2'],
@@ -260,9 +260,14 @@ describe('#02 => translation.derived', () => {
     'es-ES',
   );
 
-  const { acceptation, success } = createTests(func as any);
-
   func('localee');
+
+  func('nested', {
+    'nested.greetings': { names: ['Ana', 'Luis', 'María'] },
+    'nested.one': { LINE: 'string' },
+  });
+
+  const { acceptation, success } = createTests(func as any);
 
   describe('#00 => Acceptation', acceptation);
 
@@ -372,7 +377,7 @@ describe('#03 => translation.fromMachine', () => {
       }),
 
       nested: {
-        greetings: '¡Hola {names:list}!',
+        greetings: dt('¡Hola {names:list}!'),
         data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
         one: dt('Line {LINE} is empty', {}),
         someArray: ['cadena1', 'cadena2'],

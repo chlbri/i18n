@@ -14,28 +14,27 @@ expectTypeOf<typeof machine.translate>().toExtend<types.Fn>();
 expectTypeOf<typeof machine.translate>().toBeFunction();
 expectTypeOf<typeof machine.translateWithLocale>().toExtend<types.Fn>();
 
-expectTypeOf(machine.translate).parameter(0).toExtend<string>();
-expectTypeOf(machine.translate)
-  .parameter(0)
-  .toEqualTypeOf<
-    | 'greetings'
-    | 'hobby'
-    | 'inboxMessages'
-    | 'jerseyNumber'
-    | 'localee'
-    | 'nested'
-    | 'nested.data'
-    | 'nested.data.lang'
-    | 'nested.data.langs'
-    | 'nested.data.langs.[0]'
-    | 'nested.data.langs.[1]'
-    | 'nested.data.langs.[2]'
-    | 'nested.greetings'
-    | 'nested.one'
-    | 'nested.someArray'
-    | 'nested.someArray.[0]'
-    | 'nested.someArray.[1]'
-  >();
+type Param1 = Parameters<typeof machine.translate>[0];
+expectTypeOf<Param1>().toExtend<string>();
+expectTypeOf<Param1>().toEqualTypeOf<
+  | 'localee'
+  | 'greetings'
+  | 'inboxMessages'
+  | 'hobby'
+  | 'nested'
+  | 'jerseyNumber'
+  | 'nested.greetings'
+  | 'nested.one'
+  | 'nested.data.lang'
+  | 'nested.data.langs.[0]'
+  | 'nested.data.langs.[1]'
+  | 'nested.data.langs.[2]'
+  | 'nested.data.langs'
+  | 'nested.data'
+  | 'nested.someArray.[0]'
+  | 'nested.someArray.[1]'
+  | 'nested.someArray'
+>();
 
 const greetings = machine.translate('greetings', {
   name: 'John',
