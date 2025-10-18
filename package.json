@@ -1,6 +1,6 @@
 {
   "name": "@bemedev/i18n",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Internationalization library for Bemedev projects, providing utilities for managing translations and locale-specific content.",
   "author": {
     "email": "bri_lvi@icloud.com",
@@ -107,7 +107,7 @@
     "onchange": "^7.1.0",
     "prettier": "^3.6.2",
     "pretty-quick": "^4.2.2",
-    "rollup": "^4.52.4",
+    "rollup": "^4.52.5",
     "size-limit": "^11.2.0",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",

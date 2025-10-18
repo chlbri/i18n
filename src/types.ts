@@ -17,7 +17,7 @@ export type Plural<S extends Keys> = {
   [K in S]: Partial<
     Record<Exclude<Intl.LDMLPluralRule, 'other'>, string>
   > & {
-    other: `{?} ${string}`; // {?} is a special placeholder for plural rules
+    other: `{?}${string}`; // {?} is a special placeholder for plural rules
     formatter?: Intl.NumberFormatOptions;
     type?: Intl.PluralRuleType;
   };
