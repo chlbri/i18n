@@ -210,8 +210,139 @@ describe('#01 => translation', () => {
   });
 });
 
+const derived1 = translation.derived<typeof machine.config>(
+  dt => ({
+    localee: 'es-ES',
+    greetings: dt(
+      '¡Hola {name}! Tu última conexión fue el {lastLoginDate:date}.',
+      {
+        date: {
+          lastLoginDate: {
+            month: '2-digit',
+            year: 'numeric',
+            day: '2-digit',
+          },
+        },
+      },
+    ),
+
+    fdfd: '',
+    inboxMessages: dt('Hola {name}, tienes {messages:plural}.', {
+      plural: {
+        messages: {
+          one: '1 mensaje',
+          other: '{?} mensajes',
+          two: '2 mensajes',
+        },
+      },
+    }),
+
+    hobby: dt('Elegiste {hobby:enum} como tu pasatiempo.', {
+      enum: {
+        hobby: { runner: 'corredor', developer: 'desarrollador' },
+      },
+    }),
+
+    nested: {
+      greetings: dt('¡Hola {names:list}!'),
+      data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
+      one: dt('Line {LINE} is empty', {}),
+      someArray: ['cadena1', 'cadena2'],
+    },
+
+    jerseyNumber: dt('Tu número es {jersey:number}.', {
+      number: {
+        jersey: {},
+      },
+    }),
+  }),
+  'es-ES',
+);
 describe('#02 => translation.derived', () => {
-  const func = translation.derived<typeof machine.config>(
+  derived1('localee');
+
+  derived1('nested', {
+    'nested.greetings': { names: ['Ana', 'Luis', 'María'] },
+    'nested.one': { LINE: 'string' },
+  });
+
+  const { acceptation, success } = createTests(derived1 as any);
+
+  describe('#00 => Acceptation', acceptation);
+
+  describe(
+    '#01 => Success',
+    success(
+      {
+        invite: 'localee',
+        parameters: 'localee',
+        expected: 'es-ES',
+      },
+      {
+        invite: 'greetings',
+        parameters: [
+          'greetings',
+          {
+            name: 'Juan',
+            lastLoginDate: new Date('2024-06-15T12:00:00Z'),
+          },
+        ],
+        expected: '¡Hola Juan! Tu última conexión fue el 15/06/2024.',
+      },
+      {
+        invite: 'inboxMessages with one message',
+        parameters: ['inboxMessages', { name: 'Juan', messages: 1 }],
+        expected: 'Hola Juan, tienes 1 mensaje.',
+      },
+      {
+        invite: 'inboxMessages with multiple messages',
+        parameters: ['inboxMessages', { name: 'Juan', messages: 3 }],
+        expected: 'Hola Juan, tienes 3 mensajes.',
+      },
+      {
+        invite: 'inboxMessages with 0 messages',
+        parameters: ['inboxMessages', { name: 'Juan', messages: 0 }],
+        expected: 'Hola Juan, tienes 0 mensajes.',
+      },
+      {
+        invite: 'hobby as developer',
+        parameters: ['hobby', { hobby: 'developer' }],
+        expected: 'Elegiste desarrollador como tu pasatiempo.',
+      },
+      {
+        invite: 'hobby as runner',
+        parameters: ['hobby', { hobby: 'runner' }],
+        expected: 'Elegiste corredor como tu pasatiempo.',
+      },
+      {
+        invite: 'nested.greetings',
+        parameters: [
+          'nested.greetings',
+          { names: ['Ana', 'Luis', 'María'] },
+        ],
+        expected: '¡Hola Ana, Luis y María!',
+      },
+      {
+        invite: 'jerseyNumber',
+        parameters: ['jerseyNumber', { jersey: 23.0001 }],
+        expected: 'Tu número es 23.',
+      },
+      {
+        invite: 'nested.data.lang',
+        parameters: 'nested.data.lang',
+        expected: 'es',
+      },
+      {
+        invite: 'nested.data',
+        parameters: 'nested.data',
+        expected: { lang: 'es', langs: ['fr', 'gb', 'en'] },
+      },
+    ),
+  );
+});
+
+describe('#03 => translation.derived #2', () => {
+  const func = translation.derived<typeof derived1.config>(
     dt => ({
       localee: 'es-ES',
       greetings: dt(
@@ -342,7 +473,92 @@ describe('#02 => translation.derived', () => {
   );
 });
 
-describe('#03 => translation.fromMachine', () => {
+describe('#04 => translation and derive', () => {
+  const func = translation(derived1.config, 'es-ES');
+
+  func('localee');
+
+  func('nested', {
+    'nested.greetings': { names: ['Ana', 'Luis', 'María'] },
+    'nested.one': { LINE: 'string' },
+  });
+
+  const { acceptation, success } = createTests(func as any);
+
+  describe('#00 => Acceptation', acceptation);
+
+  describe(
+    '#01 => Success',
+    success(
+      {
+        invite: 'localee',
+        parameters: 'localee',
+        expected: 'es-ES',
+      },
+      {
+        invite: 'greetings',
+        parameters: [
+          'greetings',
+          {
+            name: 'Juan',
+            lastLoginDate: new Date('2024-06-15T12:00:00Z'),
+          },
+        ],
+        expected: '¡Hola Juan! Tu última conexión fue el 15/06/2024.',
+      },
+      {
+        invite: 'inboxMessages with one message',
+        parameters: ['inboxMessages', { name: 'Juan', messages: 1 }],
+        expected: 'Hola Juan, tienes 1 mensaje.',
+      },
+      {
+        invite: 'inboxMessages with multiple messages',
+        parameters: ['inboxMessages', { name: 'Juan', messages: 3 }],
+        expected: 'Hola Juan, tienes 3 mensajes.',
+      },
+      {
+        invite: 'inboxMessages with 0 messages',
+        parameters: ['inboxMessages', { name: 'Juan', messages: 0 }],
+        expected: 'Hola Juan, tienes 0 mensajes.',
+      },
+      {
+        invite: 'hobby as developer',
+        parameters: ['hobby', { hobby: 'developer' }],
+        expected: 'Elegiste desarrollador como tu pasatiempo.',
+      },
+      {
+        invite: 'hobby as runner',
+        parameters: ['hobby', { hobby: 'runner' }],
+        expected: 'Elegiste corredor como tu pasatiempo.',
+      },
+      {
+        invite: 'nested.greetings',
+        parameters: [
+          'nested.greetings',
+          { names: ['Ana', 'Luis', 'María'] },
+        ],
+        expected: '¡Hola Ana, Luis y María!',
+      },
+      {
+        invite: 'jerseyNumber',
+        parameters: ['jerseyNumber', { jersey: 23.0001 }],
+        expected: 'Tu número es 23.',
+      },
+      {
+        invite: 'nested.data.lang',
+        parameters: 'nested.data.lang',
+        expected: 'es',
+      },
+      {
+        invite: 'nested.data',
+        parameters: 'nested.data',
+        expected: { lang: 'es', langs: ['fr', 'gb', 'en'] },
+      },
+    ),
+  );
+});
+
+describe('#05 => translation.fromMachine', () => {
   const func = translation.fromMachine<typeof machine>(
     dt => ({
       localee: 'es-ES',

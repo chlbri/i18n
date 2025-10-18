@@ -1,8 +1,48 @@
 # @bemedev/i18n
 
 A modern, fully-typed internationalization (i18n) library for TypeScript
-and JavaScript with a fluent, composable API. Define once, compose
-per-locale, and translate safely with strong types.
+and JavaScript with a fluent, composable API. Define once, compose per-lo//
+Locales are narrowed from machine.keys const call =
+machine.translate('greetings', { name: 'A' }).to; // call: (locale?: 'en' |
+'es-ES' | 'en-US') => string
+
+````
+
+### Utility types
+
+If you need to extract types from your i18n machine, several utility types
+are provided:
+
+```ts
+import type {
+  ConfigFrom,        // Extract the configuration type
+  KeysFrom,          // Extract available locale keys
+  TranslationsFrom,  // Extract all translations
+  TranslationFrom,   // Extract a single locale translation
+  KeyFrom,           // Extract the current locale key
+} from '@bemedev/i18n/class';
+
+import type {
+  RequiredTranslations,  // Make all translations required
+  _Translations,         // Make all translations optional
+  _Params,              // Extract parameters for a translation key
+  CheckParams,          // Validate parameter requirements
+} from '@bemedev/i18n/types';
+
+// Example usage
+type Config = ConfigFrom<typeof machine>;
+type Locales = KeysFrom<typeof machine>;
+type AllTranslations = TranslationsFrom<typeof machine>;
+type EnglishTranslation = TranslationFrom<typeof machine>;
+
+// Extract parameters for a specific key
+type GreetingParams = _Params<Config, 'greetings'>;
+// => { name: string; lastLoginDate: Date }
+````
+
+**Note:** Properties prefixed with `__` (like `__key`, `__translation`) are
+internal and marked as deprecated. They exist only for type inference and
+should not be used at runtime.te safely with strong types.
 
 ## Features
 
@@ -163,8 +203,50 @@ machine.translate('unknown.key'); // ❌ unknown key
 
 // Locales are narrowed from machine.keys
 const call = machine.translate('greetings', { name: 'A' }).to;
-// call: (locale?: 'en' | 'es-ES' | 'en-US') => string
+// // call: (locale?: 'en' | 'es-ES' | 'en-US') => string
 ```
+
+### Utility types
+
+If you need to extract types from your i18n machine, several utility types
+are provided:
+
+```ts
+import type {
+  ConfigFrom, // Extract the configuration type
+  KeysFrom, // Extract available locale keys
+  TranslationsFrom, // Extract all translations
+  TranslationFrom, // Extract a single locale translation
+  KeyFrom, // Extract the current locale key
+} from '@bemedev/i18n/class';
+
+import type {
+  RequiredTranslations, // Make all translations required
+  _Translations, // Make all translations optional
+  _Params, // Extract parameters for a translation key
+  CheckParams, // Validate parameter requirements
+} from '@bemedev/i18n/types';
+
+// Example usage
+type Config = ConfigFrom<typeof machine>;
+type Locales = KeysFrom<typeof machine>;
+type AllTranslations = TranslationsFrom<typeof machine>;
+type EnglishTranslation = TranslationFrom<typeof machine>;
+
+// Extract parameters for a specific key
+type GreetingParams = _Params<Config, 'greetings'>;
+// => { name: string; lastLoginDate: Date }
+```
+
+**Note:** Properties prefixed with `__` (like `__key`, `__translation`) are
+internal and marked as deprecated. They exist only for type inference and
+should not be used at runtime.
+
+---
+
+## Advanced Usage
+
+````
 
 If you want to re-use the machine’s internal types, utility types are
 provided:
@@ -177,7 +259,7 @@ import type {
   TranslationsFrom,
   TranslationFrom, // @deprecated – internal typing only
 } from '@bemedev/i18n/class';
-```
+````
 
 Note: properties prefixed by ** (like `**key`, `\_\_translation`) are
 marked as deprecated and exist only to carry types. Don’t use them at
@@ -185,64 +267,112 @@ runtime.
 
 ---
 
-## NB:
+## Advanced Usage
 
-If you want to create a new translation based on an existing one, but only
-use types, not full object use `translationFrom`
+### Creating translations from existing configurations
+
+If you want to create a new translation based on an existing configuration
+without copying the entire object, use the `translation` helper:
+
+#### Basic usage with `translation`
 
 ```ts
-import { translationFrom } from '@bemedev/i18n';
+import { translation } from '@bemedev/i18n';
 
-const translate = translationFrom({
-  greeting: 'Hello',
-  farewell: 'Goodbye',
-  withParam: 'Hello {name}!',
-  nested: {
-    welcome: 'Welcome back',
-    deep: {
-      message: 'Deep message',
+const translate = translation(
+  {
+    greeting: 'Hello',
+    farewell: 'Goodbye',
+    withParam: 'Hello {name}!',
+    nested: {
+      welcome: 'Welcome back',
+      deep: {
+        message: 'Deep message',
+      },
     },
   },
-});
+  'en',
+);
 
-describe('#01 => should translate simple keys', () => {
-  test('#01 => greeting key', () => {
-    expect(translate('greeting')).toBe('Hello');
-  });
+// Simple translations
+translate('greeting'); // => 'Hello'
+translate('farewell'); // => 'Goodbye'
 
-  test('#02 => farewell key', () => {
-    expect(translate('farewell')).toBe('Goodbye');
-  });
-});
+// With parameters
+translate('withParam', { name: 'John' }); // => 'Hello John!'
 
-test('#02 => should translate with parameters', () => {
-  expect(translate('withParam', { name: 'John' })).toBe('Hello John!');
-});
+// Nested keys
+translate('nested.welcome'); // => 'Welcome back'
+translate('nested.deep.message'); // => 'Deep message'
 ```
 
-or with a default fallback config
+#### Using `translation.derived` for type-safe derived translations
+
+Create translations that derive from an existing configuration while
+maintaining full type safety:
 
 ```ts
-import { translationFrom } from '@bemedev/i18n';
+import { translation } from '@bemedev/i18n';
+import { machine } from './your-base-config';
 
-const rootConfig = {
-  greeting: 'Hello',
-  user: {
-    name: 'Default User',
-  },
-} as const;
+const spanishTranslation = translation.derived<typeof machine.config>(
+  dt => ({
+    localee: 'es-ES',
+    greetings: dt(
+      '¡Hola {name}! Tu última conexión fue el {lastLoginDate:date}.',
+      {
+        date: {
+          lastLoginDate: {
+            month: '2-digit',
+            year: 'numeric',
+            day: '2-digit',
+          },
+        },
+      },
+    ),
+    nested: {
+      greetings: dt('¡Hola {names:list}!'),
+    },
+  }),
+  'es-ES',
+);
 
-const translate = translationFrom.complete(rootConfig, {
-  greeting: 'Bonjour',
+// Fully typed translations
+spanishTranslation('greetings', {
+  name: 'Juan',
+  lastLoginDate: new Date('2024-06-15T12:00:00Z'),
 });
+// => '¡Hola Juan! Tu última conexión fue el 15/06/2024.'
+```
 
-test('#01 => overridden greeting translation', () => {
-  expect(translate('greeting')).toBe('Bonjour');
-});
+#### Using `translation.fromMachine` for machine-based translations
 
-test('#02 => fallback to root config for user name', () => {
-  expect(translate('user.name')).toBe('Default User'); // Should access root config
-});
+Create translations directly from an existing i18n machine:
+
+```ts
+import { translation } from '@bemedev/i18n';
+import { machine } from './your-machine';
+
+const germanTranslation = translation.fromMachine<typeof machine>(
+  dt => ({
+    localee: 'de-DE',
+    greetings: dt(
+      'Hallo {name}! Deine letzte Anmeldung war {lastLoginDate:date}.',
+    ),
+    // ... other translations
+  }),
+  'de-DE',
+);
+```
+
+### Accessing the configuration
+
+The `translation` function returns an object with a `config` property that
+exposes the underlying configuration:
+
+```ts
+const translate = translation({ greeting: 'Hello' }, 'en');
+console.log(translate.config); // => { greeting: 'Hello' }
 ```
 
 ## Licence
@@ -266,7 +396,7 @@ The Youtube video that inspired this library can be found
 
 <br/>
 
-## Auteur
+## Author
 
 chlbri (bri_lvi@icloud.com)
 
@@ -278,7 +408,7 @@ chlbri (bri_lvi@icloud.com)
 
 <br/>
 
-## Liens
+## Mainfull Links
 
 - [Documentation](https://github.com/chlbri/i18n)
-- [Signaler un problème](https://github.com/chlbri/i18n/issues)
+- [Signal a bug](https://github.com/chlbri/i18n/issues)
