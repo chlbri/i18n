@@ -1,4 +1,4 @@
 export * from './class';
 export * from './helpers';
-export * from './translationFrom';
+export * from './translation';
 export * from './types';

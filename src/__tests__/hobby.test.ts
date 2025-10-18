@@ -25,7 +25,7 @@ describe('hobby', () => {
         },
         {
           invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us',
+          parameters: 'en-us' as any,
           expected: 'You chose runner as your hobby.',
         },
         {
@@ -35,7 +35,7 @@ describe('hobby', () => {
         },
         {
           invite: 'not-exists => en',
-          parameters: 'not-exists',
+          parameters: 'not-exists' as any,
           expected: 'You chose runner as your hobby.',
         },
       ),
@@ -63,7 +63,7 @@ describe('hobby', () => {
         },
         {
           invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us',
+          parameters: 'en-us' as any,
           expected: 'You chose developer as your hobby.',
         },
         {
@@ -73,7 +73,7 @@ describe('hobby', () => {
         },
         {
           invite: 'not-exists => en',
-          parameters: 'not-exists',
+          parameters: 'not-exists' as any,
           expected: 'You chose developer as your hobby.',
         },
       ),

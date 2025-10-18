@@ -49,7 +49,6 @@ export const machine = create(
       },
     ),
 
-    fdfd: '',
     inboxMessages: dt('Hola {name}, tienes {messages:plural}.', {
       plural: {
         messages: {
