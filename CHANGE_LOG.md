@@ -4,6 +4,18 @@
 <br/>
 
 <details>
+<summary><h3> <strong>Version [0.5.1]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
+
+- Updated `I18nMessage` type to include `LanguageMessages`
+- Removed `DotPathsFor` type definition
+- Better typings
+- 🧪 **100%** _coverage_
+
+</details>
+
+<br/>
+
+<details>
 <summary><h3> <strong>Version [0.5.0]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
 
 - BREAKING CHANGES
