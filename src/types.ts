@@ -88,15 +88,27 @@ export type _Translations<R> = R extends
         }
       : never;
 
-// export type MakeSomeR<T> = {
-//   [K in keyof T]: T[K] extends Array<any>
-//     ? T[K]
-//     : T[K] extends object
-//       ? MakeSomeR<T[K]>
-//       : any;
-// };
-
-// type TT = types.DeepRequired<Translations>['nested']['one']
+export type _RequiredTranslations<R> = R extends
+  | [infer S extends string, infer A]
+  | (infer S extends string)
+  ? ExtractParamOptions<S> extends infer E
+    ?
+        | [string, E]
+        | (E extends types.Ru
+            ? keyof types.NotSubTypeLow<E, undefined> extends undefined
+              ? string
+              : never
+            : string)
+    : A extends string
+      ? [string, string]
+      : string
+  : R extends string[]
+    ? types.TupleOf<string, R['length']>
+    : R extends object
+      ? {
+          [K in keyof R]: _RequiredTranslations<R[K]>;
+        }
+      : never;
 
 type Array2 = [string, unknown];
 
@@ -276,7 +288,24 @@ export type Translate_F2<
     key: S,
     args: A,
   ): string;
-  <S extends KS>(key: S): string;
+  <S extends KS>(key: S): D[S];
 };
 
 export type KeyU<S extends types.Keys> = Record<S, unknown>;
+
+export type Keys18n =
+  | 'keys'
+  | 'config'
+  | 'translations'
+  | '__translation'
+  | '__key'
+  | 'provideTranslation'
+  | 'translateWithLocale'
+  | 'translate';
+
+export type Simple18 = Record<Keys18n, any>;
+
+export type infer18<T extends Simple18> = Extract<
+  _RequiredTranslations<T['config']>,
+  LanguageMessages
+>;
