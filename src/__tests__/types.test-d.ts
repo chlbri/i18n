@@ -8,6 +8,7 @@ import type {
 } from '../class';
 import type { DateArgs, LanguageMessages } from '../types';
 import { machine } from './fixtures';
+import type { CustomMessage } from '../message';
 
 expectTypeOf<typeof machine.translate>().toExtend<types.Fn>();
 expectTypeOf<typeof machine.translate>().toBeFunction();
@@ -17,18 +18,23 @@ expectTypeOf(machine.translate).parameter(0).toExtend<string>();
 expectTypeOf(machine.translate)
   .parameter(0)
   .toEqualTypeOf<
-    | 'localee'
-    | 'nested.data.langs'
-    | 'nested.someArray'
-    | 'nested.data.lang'
     | 'greetings'
     | 'hobby'
+    | 'inboxMessages'
+    | 'jerseyNumber'
+    | 'localee'
+    | 'nested'
+    | 'nested.data'
+    | 'nested.data.lang'
+    | 'nested.data.langs'
+    | 'nested.data.langs.[0]'
+    | 'nested.data.langs.[1]'
+    | 'nested.data.langs.[2]'
     | 'nested.greetings'
     | 'nested.one'
-    | 'inboxMessages'
-    | 'nested'
-    | 'jerseyNumber'
-    | 'nested.data'
+    | 'nested.someArray'
+    | 'nested.someArray.[0]'
+    | 'nested.someArray.[1]'
   >();
 
 const greetings = machine.translate('greetings', {
@@ -52,12 +58,12 @@ expectTypeOf(machine.translations).toEqualTypeOf<
 const trnGreet = machine.translations['en-US'].greetings;
 expectTypeOf(trnGreet).toEqualTypeOf<
   | string
-  | [
+  | CustomMessage<
       string,
       {
-        date?: DateArgs<'lastLoginDate'>;
-      },
-    ]
+        date?: DateArgs<'lastLoginDate'> | undefined;
+      }
+    >
   | undefined
 >();
 

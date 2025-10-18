@@ -126,7 +126,6 @@ describe('#01 => translation', () => {
       });
 
       test('#03 => plural form (count = 0)', () => {
-        console.log('EEROOR =>', translate('pluralMessage', { count: 0 }));
         expect(translate('pluralMessage', { count: 0 })).toBe(
           'You have 0 items',
         );
@@ -391,25 +390,7 @@ describe('#03 => translation.fromMachine', () => {
   const { acceptation, success } = createTests(func as any);
 
   func('localee');
-
   describe('#00 => Acceptation', acceptation);
-
-  const current = {
-    LANG: process.env.LANG,
-    LC_ALL: process.env.LC_ALL,
-  };
-
-  beforeAll(() => {
-    console.log('env =>', process.env);
-    console.log('current =>', current);
-    process.env.LANG = 'es-ES';
-    process.env.LC_ALL = 'es-ES';
-  });
-
-  afterAll(() => {
-    process.env.LANG = current.LANG;
-    process.env.LC_ALL = current.LC_ALL;
-  });
 
   describe(
     '#01 => Success',

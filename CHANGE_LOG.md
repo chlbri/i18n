@@ -4,11 +4,21 @@
 <br/>
 
 <details>
+<summary><h3> <strong>Version [0.4.3]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
+
+- Addition of the CustomMessage class
+- Update of translation types
+- Possibility to translate nested arrays
+- 🧪 **100%** _coverage_
+
+</details>
+
+<details>
 <summary><h3> <strong>Version [0.4.2]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
 
-- defineTranslation :
-  - refactorisation pour accepter un nombre variable d'arguments
-  - utilisation du type DefineTransition_F pour une meilleure typage
+- defineTranslation:
+  - Refactoring to accept a variable number of arguments
+  - Use of the DefineTransition_F type for better typing
 - 🧪 **100%** _coverage_
 
 </details>
@@ -16,8 +26,7 @@
 <details>
 <summary><h3> <strong>Version [0.4.1]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
 
-- Correction de l'espacement dans le type Plural pour le placeholder
-  spécial
+- Correction of spacing in the Plural type for the special placeholder
 - 🧪 **100%** _coverage_
 
 </details>

@@ -1,3 +1,5 @@
+import { decompose } from '@bemedev/decompose';
+import { CustomMessage } from './message';
 import type {
   DefineTransition_F,
   Fn,
@@ -6,7 +8,7 @@ import type {
 } from './types';
 
 export const defineTranslation: DefineTransition_F = (...args) => {
-  return args as any;
+  return new CustomMessage<any, any>(args[0], args[1] || {});
 };
 
 export const dt = defineTranslation;
@@ -31,7 +33,7 @@ export function getTranslation(
   translations: LanguageMessages,
   key: string,
   args?: any,
-) {
+): any {
   const translation = getTranslationByKey(translations, key);
   const argObj = args || {};
 
@@ -39,25 +41,24 @@ export function getTranslation(
     return performSubstitution(locale, translation, argObj, {});
   }
 
+  if (translation instanceof CustomMessage) {
+    const { translate, args } = translation;
+    return performSubstitution(locale, translate, argObj, args);
+  }
+
   if (Array.isArray(translation)) {
-    const canReturn =
-      translation.length !== 2 || typeof translation[1] === 'string';
-
-    if (canReturn) return translation;
-    const [str, options] = translation;
-
-    return performSubstitution(locale, str, argObj, options);
+    return translation
+      .filter(t => !(t instanceof CustomMessage))
+      .map((_, index) =>
+        getTranslation(locale, translations, `${key}.[${index}]`, args),
+      );
   }
 
   const isObject = typeof translation === 'object' && translation !== null;
   if (isObject) {
     const obj: any = {};
     const entries = Object.entries(translation)
-      .filter(([, v]) => {
-        const notValid =
-          Array.isArray(v) && v.length === 2 && typeof v[1] === 'object';
-        return !notValid;
-      })
+      .filter(([, t]) => !(t instanceof CustomMessage))
       .map(([k]) => {
         return [
           k,
@@ -75,36 +76,12 @@ export function getTranslation(
 }
 
 function getTranslationByKey(obj: LanguageMessages, key: string) {
-  const keys = key.split('.');
-  let currentObj: any = obj;
-  const len = keys.length - 1;
-
-  let out = undefined;
-
-  for (let i = 0; i <= len; i++) {
-    const k = keys[i];
-    const newObj = currentObj[k];
-    if (!newObj) return undefined;
-
-    const canReturn =
-      typeof newObj === 'string' ||
-      (Array.isArray(newObj) &&
-        newObj.length === 2 &&
-        typeof newObj[0] === 'string');
-
-    if (canReturn) {
-      out = newObj;
-      break;
-    }
-    if (i === len) {
-      out = newObj;
-      break;
-    }
-
-    currentObj = newObj;
-  }
-
-  return out;
+  const decomposed = decompose.low(obj, {
+    start: false,
+    object: 'both',
+    sep: '.',
+  });
+  return decomposed[key];
 }
 
 function performSubstitution(
