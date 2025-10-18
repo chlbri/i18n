@@ -205,15 +205,15 @@ Pour des changements complexes, utiliser des sous-listes :
 Mentionner les issues/PRs si pertinent :
 
 ```markdown
-- Correction du bug #123 dans la gestion des pluriels
-- Implémentation de la feature demandée dans #456
+- Correction du bug 123 dans la gestion des pluriels
+- Implémentation de la feature demandée dans 456
 ```
 
 ## 📚 Ressources
 
-- [Conventional Commits](https://www.conventionalcommits.org/)
-- [Keep a Changelog](https://keepachangelog.com/)
-- [Semantic Versioning](https://semver.org/)
+- https://www.conventionalcommits.org/
+- https://keepachangelog.com/
+- https://semver.org/
 
 ---
 
