@@ -35,7 +35,7 @@ Le système doit automatiquement :
 ### Input
 
 ```
-#codebase Bump version inside CHANGELOG.md according to the version inside package.json.
+search/codebase Bump version inside CHANGELOG.md according to the version inside package.json.
 
 Commit message: "feat: Add nested translation support with innerArgs
 
