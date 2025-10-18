@@ -1,18 +1,12 @@
 import type {
-  ExtractParamOptions,
+  DefineTransition_F,
   Fn,
   LanguageMessages,
   ParamOptions,
 } from './types';
 
-export const defineTranslation = <
-  S extends string,
-  O extends ExtractParamOptions<S>,
->(
-  string: S,
-  options: O,
-): [S, O] => {
-  return [string, options];
+export const defineTranslation: DefineTransition_F = (...args) => {
+  return args as any;
 };
 
 export const dt = defineTranslation;

@@ -66,6 +66,18 @@ export type ExtractParamOptions<S extends string> =
       : ExtractParamOptions<Rest> // If the string has no parameter type
     : unknown; // If the string has no parameters
 
+export type DefineTransition_F = <
+  S extends string,
+  O extends ExtractParamOptions<S>,
+  S1 extends ExtractParamOptions<S> = ExtractParamOptions<S>,
+>(
+  ...[string, options]: unknown extends S1
+    ? [S, options?: O]
+    : object extends S1
+      ? [S, options?: O]
+      : [S, options: O]
+) => [S, O];
+
 export type _Translations<R> = R extends
   | [infer S extends string, infer A]
   | (infer S extends string)
