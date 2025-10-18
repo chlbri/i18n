@@ -8,28 +8,33 @@ import type {
 } from '../class';
 import type { DateArgs, LanguageMessages } from '../types';
 import { machine } from './fixtures';
+import type { CustomMessage } from '../message';
 
 expectTypeOf<typeof machine.translate>().toExtend<types.Fn>();
 expectTypeOf<typeof machine.translate>().toBeFunction();
 expectTypeOf<typeof machine.translateWithLocale>().toExtend<types.Fn>();
 
-expectTypeOf(machine.translate).parameter(0).toExtend<string>();
-expectTypeOf(machine.translate)
-  .parameter(0)
-  .toEqualTypeOf<
-    | 'localee'
-    | 'nested.data.langs'
-    | 'nested.someArray'
-    | 'nested.data.lang'
-    | 'greetings'
-    | 'hobby'
-    | 'nested.greetings'
-    | 'nested.one'
-    | 'inboxMessages'
-    | 'nested'
-    | 'jerseyNumber'
-    | 'nested.data'
-  >();
+type Param1 = Parameters<typeof machine.translate>[0];
+expectTypeOf<Param1>().toExtend<string>();
+expectTypeOf<Param1>().toEqualTypeOf<
+  | 'localee'
+  | 'greetings'
+  | 'inboxMessages'
+  | 'hobby'
+  | 'nested'
+  | 'jerseyNumber'
+  | 'nested.greetings'
+  | 'nested.one'
+  | 'nested.data.lang'
+  | 'nested.data.langs.[0]'
+  | 'nested.data.langs.[1]'
+  | 'nested.data.langs.[2]'
+  | 'nested.data.langs'
+  | 'nested.data'
+  | 'nested.someArray.[0]'
+  | 'nested.someArray.[1]'
+  | 'nested.someArray'
+>();
 
 const greetings = machine.translate('greetings', {
   name: 'John',
@@ -52,12 +57,12 @@ expectTypeOf(machine.translations).toEqualTypeOf<
 const trnGreet = machine.translations['en-US'].greetings;
 expectTypeOf(trnGreet).toEqualTypeOf<
   | string
-  | [
+  | CustomMessage<
       string,
       {
-        date?: DateArgs<'lastLoginDate'>;
-      },
-    ]
+        date?: DateArgs<'lastLoginDate'> | undefined;
+      }
+    >
   | undefined
 >();
 

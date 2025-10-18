@@ -1,3 +1,5 @@
+import { decompose } from '@bemedev/decompose';
+import { CustomMessage } from './message';
 import type {
   DefineTransition_F,
   Fn,
@@ -6,7 +8,7 @@ import type {
 } from './types';
 
 export const defineTranslation: DefineTransition_F = (...args) => {
-  return args as any;
+  return new CustomMessage<any, any>(args[0], args[1] || {});
 };
 
 export const dt = defineTranslation;
@@ -26,12 +28,18 @@ export const addFn = <Main extends Fn, const Tr extends object = object>(
   return out;
 };
 
+export const innerArgs = (translation: any, KEY: string, args?: any) => {
+  const isCustom = translation instanceof CustomMessage;
+  const arg = isCustom ? args?.[KEY] : {};
+  return arg;
+};
+
 export function getTranslation(
   locale: string,
   translations: LanguageMessages,
   key: string,
   args?: any,
-) {
+): any {
   const translation = getTranslationByKey(translations, key);
   const argObj = args || {};
 
@@ -39,31 +47,41 @@ export function getTranslation(
     return performSubstitution(locale, translation, argObj, {});
   }
 
+  if (translation instanceof CustomMessage) {
+    const { translate, args } = translation;
+
+    return performSubstitution(locale, translate, argObj, args);
+  }
+
   if (Array.isArray(translation)) {
-    const canReturn =
-      translation.length !== 2 || typeof translation[1] === 'string';
+    return translation.map((t, index) => {
+      const KEY = `${key}.[${index}]`;
 
-    if (canReturn) return translation;
-    const [str, options] = translation;
-
-    return performSubstitution(locale, str, argObj, options);
+      return getTranslation(
+        locale,
+        translations,
+        KEY,
+        innerArgs(t, KEY, args),
+      );
+    });
   }
 
   const isObject = typeof translation === 'object' && translation !== null;
   if (isObject) {
     const obj: any = {};
-    const entries = Object.entries(translation)
-      .filter(([, v]) => {
-        const notValid =
-          Array.isArray(v) && v.length === 2 && typeof v[1] === 'object';
-        return !notValid;
-      })
-      .map(([k]) => {
-        return [
-          k,
-          getTranslation(locale, translations, `${key}.${k}`, {}),
-        ] as const;
-      });
+    const entries = Object.entries(translation).map(([k, t]) => {
+      const KEY = `${key}.${k}`;
+
+      const value = getTranslation(
+        locale,
+        translations,
+        KEY,
+        innerArgs(t, KEY, args),
+      );
+
+      return [k, value] as const;
+    });
+
     entries.forEach(([k, v]) => {
       obj[k] = v;
     });
@@ -74,38 +92,24 @@ export function getTranslation(
   return undefined;
 }
 
-function getTranslationByKey(obj: LanguageMessages, key: string) {
-  const keys = key.split('.');
-  let currentObj: any = obj;
-  const len = keys.length - 1;
+/**
+ * Retrieves a translation value from a nested language messages object by flattening it and accessing the specified key.
+ *
+ * Use {@link decompose.low}
+ *
+ * @param obj - The language messages object to search in, typically a nested structure of translations.
+ * @param key - The dot-separated key path to the desired translation (e.g., "section.subsection.key").
+ * @returns The translation value associated with the key, or undefined if not found.
+ */
+const getTranslationByKey = (obj: LanguageMessages, key: string) => {
+  const decomposed = decompose.low(obj, {
+    start: false,
+    object: 'both',
+    sep: '.',
+  });
 
-  let out = undefined;
-
-  for (let i = 0; i <= len; i++) {
-    const k = keys[i];
-    const newObj = currentObj[k];
-    if (!newObj) return undefined;
-
-    const canReturn =
-      typeof newObj === 'string' ||
-      (Array.isArray(newObj) &&
-        newObj.length === 2 &&
-        typeof newObj[0] === 'string');
-
-    if (canReturn) {
-      out = newObj;
-      break;
-    }
-    if (i === len) {
-      out = newObj;
-      break;
-    }
-
-    currentObj = newObj;
-  }
-
-  return out;
-}
+  return decomposed[key];
+};
 
 function performSubstitution(
   locale: string,

@@ -126,7 +126,6 @@ describe('#01 => translation', () => {
       });
 
       test('#03 => plural form (count = 0)', () => {
-        console.log('EEROOR =>', translate('pluralMessage', { count: 0 }));
         expect(translate('pluralMessage', { count: 0 })).toBe(
           'You have 0 items',
         );
@@ -246,7 +245,7 @@ describe('#02 => translation.derived', () => {
       }),
 
       nested: {
-        greetings: '¡Hola {names:list}!',
+        greetings: dt('¡Hola {names:list}!'),
         data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
         one: dt('Line {LINE} is empty', {}),
         someArray: ['cadena1', 'cadena2'],
@@ -261,9 +260,14 @@ describe('#02 => translation.derived', () => {
     'es-ES',
   );
 
-  const { acceptation, success } = createTests(func as any);
-
   func('localee');
+
+  func('nested', {
+    'nested.greetings': { names: ['Ana', 'Luis', 'María'] },
+    'nested.one': { LINE: 'string' },
+  });
+
+  const { acceptation, success } = createTests(func as any);
 
   describe('#00 => Acceptation', acceptation);
 
@@ -373,7 +377,7 @@ describe('#03 => translation.fromMachine', () => {
       }),
 
       nested: {
-        greetings: '¡Hola {names:list}!',
+        greetings: dt('¡Hola {names:list}!'),
         data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
         one: dt('Line {LINE} is empty', {}),
         someArray: ['cadena1', 'cadena2'],
@@ -391,25 +395,7 @@ describe('#03 => translation.fromMachine', () => {
   const { acceptation, success } = createTests(func as any);
 
   func('localee');
-
   describe('#00 => Acceptation', acceptation);
-
-  const current = {
-    LANG: process.env.LANG,
-    LC_ALL: process.env.LC_ALL,
-  };
-
-  beforeAll(() => {
-    console.log('env =>', process.env);
-    console.log('current =>', current);
-    process.env.LANG = 'es-ES';
-    process.env.LC_ALL = 'es-ES';
-  });
-
-  afterAll(() => {
-    process.env.LANG = current.LANG;
-    process.env.LC_ALL = current.LC_ALL;
-  });
 
   describe(
     '#01 => Success',

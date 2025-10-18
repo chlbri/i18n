@@ -3,7 +3,9 @@ import { create } from '../class';
 export const machine = create(
   dt => ({
     localee: 'en',
-    greetings: 'Hello {name}! Your last login was {lastLoginDate:date}.',
+    greetings: dt(
+      'Hello {name}! Your last login was {lastLoginDate:date}.',
+    ),
     inboxMessages: dt('Hello {name}, you have {messages:plural}.', {
       plural: {
         messages: { one: '1 message', other: '{?} messages' },
@@ -18,7 +20,7 @@ export const machine = create(
       }),
       data: { lang: 'en', langs: ['fr', 'gb', 'es'] },
       someArray: ['string1', 'string2'],
-      one: dt('Line {LINE} is empty', {}),
+      one: dt('Line {LINE} is empty'),
     },
 
     jerseyNumber: dt('Your number is {jersey:number}.', {
@@ -66,9 +68,9 @@ export const machine = create(
     }),
 
     nested: {
-      greetings: '¡Hola {names:list}!',
+      greetings: dt('¡Hola {names:list}!'),
       data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
-      one: dt('Line {LINE} is empty', {}),
+      one: dt('La línea {LINE} está vacía'),
       someArray: ['cadena1', 'cadena2'],
     },
 
@@ -83,4 +85,5 @@ export const machine = create(
   });
 
 export const translate = machine.translate;
+
 export const translateWithLocale = machine.translateWithLocale;

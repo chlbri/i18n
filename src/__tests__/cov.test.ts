@@ -61,22 +61,6 @@ describe('Coverage', () => {
         'Hello {name}! Your last login was {lastLoginDate:date}.',
       );
     });
-
-    test('#04.03 => InboxMessages is function', () => {
-      const expected = [
-        'Hello {name}, you have {messages:plural}.',
-        {
-          plural: {
-            messages: {
-              one: '1 message',
-              other: '{?} messages',
-            },
-          },
-        },
-      ];
-
-      expect(config.inboxMessages).toStrictEqual(expected);
-    });
   });
 
   describe('#05 => typings', () => {

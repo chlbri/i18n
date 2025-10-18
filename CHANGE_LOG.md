@@ -4,23 +4,59 @@
 <br/>
 
 <details>
-<summary><h3> <strong>Version [0.4.2]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
+<summary><h3> <strong>Version [0.5.0]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
 
-- defineTranslation :
-  - refactorisation pour accepter un nombre variable d'arguments
-  - utilisation du type DefineTransition_F pour une meilleure typage
+- BREAKING CHANGES
+- Refactor translations and improve type safety
+- Updated translation strings in fixtures and tests to use the `dt`
+  function for dynamic translations
+- Enhanced the `getTranslation` function to handle nested translations more
+  effectively with the introduction of `innerArgs`
+- Improved type definitions for translations, ensuring better type
+  inference and safety
+- Adjusted test cases to reflect changes in translation structure and
+  ensure accuracy
+- Modified Vitest configuration to ignore source errors during type
+  checking for smoother development experience
 - 🧪 **100%** _coverage_
 
 </details>
+
+<br/>
+
+<details>
+<summary><h3> <strong>Version [0.4.3]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
+
+- Addition of the CustomMessage class
+- Update of translation types
+- Possibility to translate nested arrays
+- 🧪 **100%** _coverage_
+
+</details>
+
+<br/>
+
+<details>
+<summary><h3> <strong>Version [0.4.2]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
+
+- defineTranslation:
+  - Refactoring to accept a variable number of arguments
+  - Use of the DefineTransition_F type for better typing
+- 🧪 **100%** _coverage_
+
+</details>
+
+<br/>
 
 <details>
 <summary><h3> <strong>Version [0.4.1]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
 
-- Correction de l'espacement dans le type Plural pour le placeholder
-  spécial
+- Correction of spacing in the Plural type for the special placeholder
 - 🧪 **100%** _coverage_
 
 </details>
+
+<br/>
 
 <details>
 <summary><h3> <strong>Version [0.4.0]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
@@ -39,6 +75,8 @@
 
 </details>
 
+<br/>
+
 <details>
 <summary><h3> <strong>Version [0.3.0]</strong> &mdash; <i>2025/09/21 22:15<i/></h3></summary>
 
@@ -47,6 +85,8 @@
 - 🧪 **100%** _coverage_
 
 </details>
+
+<br/>
 
 <details>
 <summary><h3> <strong>Version [0.2.1]</strong> &mdash; <i>2025/07/26 08:25<i/></h3></summary>

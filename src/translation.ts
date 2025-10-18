@@ -2,8 +2,8 @@ import { create } from './class';
 import { defineTranslation } from './helpers';
 import {
   infer18,
-  type _RequiredTranslations,
   type LanguageMessages,
+  type RequiredTranslations,
   type Simple18,
   type Translate_F2,
 } from './types';
@@ -40,14 +40,14 @@ export const translation = <const R extends LanguageMessages>(
 
 translation.derived = <const R extends LanguageMessages>(
   func:
-    | ((define: typeof defineTranslation) => _RequiredTranslations<R>)
-    | _RequiredTranslations<R>,
+    | ((define: typeof defineTranslation) => RequiredTranslations<R>)
+    | RequiredTranslations<R>,
   locale = 'en-US',
 ) => {
-  return translation(func, locale);
+  return translation<R>(func as any, locale);
 };
 
 translation.fromMachine = <const T extends Simple18>(
   func: ((define: typeof defineTranslation) => infer18<T>) | infer18<T>,
   locale = 'en-US',
-) => translation(func, locale);
+) => translation<T['config']>(func, locale);
