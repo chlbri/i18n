@@ -115,10 +115,10 @@ type Array2 = [string, unknown];
 
 export type _I18nMessage = string | CustomMessage;
 
-export type I18nMessage = types.SoA<_I18nMessage>;
+export type I18nMessage = types.SoA<_I18nMessage | LanguageMessages>;
 
 export type LanguageMessages = {
-  [key: string]: I18nMessage | LanguageMessages;
+  [key: string]: I18nMessage;
 };
 
 type Join<K, P> = K extends string
@@ -126,14 +126,6 @@ type Join<K, P> = K extends string
     ? `${K}.${P}`
     : never
   : never;
-
-export type DotPathsFor<T extends object> = {
-  [K in keyof T]: T[K] extends I18nMessage
-    ? K
-    : T[K] extends object
-      ? Join<K, DotPathsFor<T[K]>>
-      : never;
-}[keyof T];
 
 export type _Soften<T> = {
   [K in keyof T]: T[K] extends Array2
