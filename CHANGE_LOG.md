@@ -4,14 +4,26 @@
 <br/>
 
 <details>
+<summary><h3> <strong>Version [0.4.1]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
+
+- Correction de l'espacement dans le type Plural pour le placeholder
+  spécial
+- 🧪 **100%** _coverage_
+
+</details>
+
+<details>
 <summary><h3> <strong>Version [0.4.0]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
 
 - BREAKING CHANGES
 - translationFrom is now `translation` with two methods:
-  - `translation.derived`: to create translation functions from existing config
-  - `translation.fromMachine`: to create translation functions from machine-readable translations
+  - `translation.derived`: to create translation functions from existing
+    config
+  - `translation.fromMachine`: to create translation functions from
+    machine-readable translations
 - Introduction of a new translation module with improved typing
-- Adjustment of existing test cases to accommodate the new translation structure
+- Adjustment of existing test cases to accommodate the new translation
+  structure
 - Cleanup of unused code and optimization of imports
 - 🧪 **100%** _coverage_
 
