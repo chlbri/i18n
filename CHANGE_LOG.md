@@ -4,6 +4,16 @@
 <br/>
 
 <details>
+<summary><h3> <strong>Version [0.4.2]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
+
+- defineTranslation :
+  - refactorisation pour accepter un nombre variable d'arguments
+  - utilisation du type DefineTransition_F pour une meilleure typage
+- 🧪 **100%** _coverage_
+
+</details>
+
+<details>
 <summary><h3> <strong>Version [0.4.1]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
 
 - Correction de l'espacement dans le type Plural pour le placeholder
