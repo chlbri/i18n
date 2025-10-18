@@ -67,6 +67,11 @@ export type ExtractParamOptions<S extends string> =
       : ExtractParamOptions<Rest> // If the string has no parameter type
     : unknown; // If the string has no parameters
 
+export type ExtractParamString<S extends string> =
+  S extends `${string}{${infer Param}}${infer Rest}`
+    ? `${string}{${Param}}${ExtractParamString<Rest>}`
+    : string;
+
 export type DefineTransition_F = <
   S extends string,
   O extends ExtractParamOptions<S>,
@@ -80,10 +85,10 @@ export type DefineTransition_F = <
 ) => CustomMessage<S, O>;
 
 type __Translations<R> =
-  R extends CustomMessage<string, infer A>
-    ? CustomMessage<string, A> | string
-    : R extends any[]
-      ? __Translations<R[number]>[]
+  R extends CustomMessage<infer S, infer A>
+    ? CustomMessage<ExtractParamString<S>, A>
+    : R extends [infer A, ...infer Rest]
+      ? [__Translations<A>, ...__Translations<Rest>]
       : R extends object
         ? {
             [K in keyof R]?: __Translations<R[K]>;
@@ -96,8 +101,8 @@ export type _Translations<R extends LanguageMessages> = Extract<
 >;
 
 type _RequiredTranslations<R> =
-  R extends CustomMessage<string, infer A>
-    ? CustomMessage<string, A>
+  R extends CustomMessage<infer S, infer A>
+    ? CustomMessage<ExtractParamString<S>, A>
     : R extends [infer A, ...infer Rest]
       ? [_RequiredTranslations<A>, ..._RequiredTranslations<Rest>]
       : R extends object
@@ -199,18 +204,29 @@ export type _Params<Translations, S extends string> =
     Translations,
     S
   >
-    ? A[0] extends Array<string>
-      ? unknown
-      : ExtractParamArgs<
-          Extract<A[0], string>,
-          A[1] extends {
-            enum: infer E;
-          }
-            ? keyof E extends never
-              ? EnumMap
-              : E
-            : EnumMap
-        >
+    ? ExtractParamArgs<
+        Extract<A[0], string>,
+        A[1] extends {
+          enum: infer E;
+        }
+          ? keyof E extends never
+            ? EnumMap
+            : E
+          : EnumMap
+      >
+    : never;
+
+export type CheckParams<Translations, S extends string> =
+  NormalizedTranslationAtKeyWithParams<
+    Translations,
+    S
+  > extends infer A extends NormalizedTranslationAtKeyWithParams<
+    Translations,
+    S
+  >
+    ? unknown extends A[1]
+      ? never
+      : A[1]
     : never;
 
 export type PathsWithParams<T extends object> = keyof Decompose<
@@ -280,18 +296,21 @@ export type Translate_F2<
   Pn extends string = PathsWithNoParams<R>,
   Pp extends string = PathsWithParams<R>,
   KS extends keyof D & string = Exclude<keyof D, Pn | Pp> & string,
-> = <const S extends KS | Pp | Pn>(
-  key: S,
-  ...args: S extends Pp
-    ? [_Params<R, S>]
-    : Extract<Pp, `${S}.${string}`> extends never
-      ? []
-      : [
-          args: {
-            [K in Extract<Pp, `${S}.${string}`>]: _Params<R, K>;
-          },
-        ]
-) => S extends KS ? D[S] : string;
+> = {
+  <const S extends KS | Pp | Pn>(
+    key: S,
+    ...args: S extends Pp
+      ? [_Params<R, S>]
+      : Extract<Pp, `${S}.${string}`> extends never
+        ? []
+        : [
+            args: {
+              [K in Extract<Pp, `${S}.${string}`>]: _Params<R, K>;
+            },
+          ]
+  ): S extends KS ? D[S] : string;
+  config: R;
+};
 
 export type KeyU<S extends types.Keys> = Record<S, unknown>;
 

@@ -63,20 +63,17 @@ class I18n<
     else this.#translations[key] = func;
   };
 
-  provideTranslation = <K extends string, V extends Tr>(
+  provideTranslation = <const K extends string, V extends Tr>(
     key: K,
     func: ((define: typeof defineTranslation) => V) | V,
-  ) => {
-    const out = new I18n<R, [...Keys, K]>(
-      this._config,
-      ...(this.#initials as any),
-    );
+  ): I18n<R, [...Keys, K]> => {
+    const out = new I18n(this._config, ...(this.#initials as any));
 
     out.#translations = { ...this.#translations };
 
     out.#addTranslation(key, func);
 
-    return out;
+    return out as any;
   };
 
   #getOrderedLocaleAndParentLocales = (locale?: string) => {

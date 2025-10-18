@@ -6,9 +6,14 @@ import type {
   TranslationFrom,
   TranslationsFrom,
 } from '../class';
-import type { DateArgs, LanguageMessages } from '../types';
-import { machine } from './fixtures';
 import type { CustomMessage } from '../message';
+import type {
+  _Params,
+  DateArgs,
+  LanguageMessages,
+  RequiredTranslations,
+} from '../types';
+import { machine } from './fixtures';
 
 expectTypeOf<typeof machine.translate>().toExtend<types.Fn>();
 expectTypeOf<typeof machine.translate>().toBeFunction();
@@ -56,15 +61,17 @@ expectTypeOf(machine.translations).toEqualTypeOf<
 
 const trnGreet = machine.translations['en-US'].greetings;
 expectTypeOf(trnGreet).toEqualTypeOf<
-  | string
   | CustomMessage<
-      string,
+      `${string}{name}${string}{lastLoginDate:date}${string}`,
       {
-        date?: DateArgs<'lastLoginDate'> | undefined;
+        date?: DateArgs<'lastLoginDate'>;
       }
     >
   | undefined
 >();
+
+export const ddd: `${string}{name}${string}{lastLoginDate:date}${string}` =
+  'Hello {name}{lastLoginDate:date}.';
 
 expectTypeOf(machine.translations.en).toEqualTypeOf<
   TranslationFrom<typeof machine>
@@ -86,3 +93,9 @@ expectTypeOf(machine.__key).toEqualTypeOf<KeyFrom<typeof machine>>();
 
 expectTypeOf(machine.config).toExtend<LanguageMessages>();
 expectTypeOf(machine.config).toEqualTypeOf<ConfigFrom<typeof machine>>();
+
+type RT1 = RequiredTranslations<typeof machine.config>;
+
+expectTypeOf<_Params<RT1, 'greetings'>>().toEqualTypeOf<
+  _Params<typeof machine.config, 'greetings'>
+>();

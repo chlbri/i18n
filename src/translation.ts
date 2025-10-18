@@ -16,6 +16,7 @@ const _translation = <const R extends LanguageMessages>(
 
   const out = (...args: any[]) =>
     (_class as any).translate(...args).to(locale);
+  out.config = config;
 
   return out as Translate_F2<R>;
 };
@@ -44,10 +45,10 @@ translation.derived = <const R extends LanguageMessages>(
     | RequiredTranslations<R>,
   locale = 'en-US',
 ) => {
-  return translation<R>(func as any, locale);
+  return translation(func, locale);
 };
 
 translation.fromMachine = <const T extends Simple18>(
   func: ((define: typeof defineTranslation) => infer18<T>) | infer18<T>,
   locale = 'en-US',
-) => translation<T['config']>(func, locale);
+) => translation(func, locale);

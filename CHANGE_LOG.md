@@ -4,6 +4,32 @@
 <br/>
 
 <details>
+<summary><h3> <strong>Version [0.5.2]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
+
+- Added `config` property to `Translate_F2` type and `_translation`
+  function return value
+- Enhanced `__Translations` and `_RequiredTranslations` to preserve exact
+  parameter strings with `ExtractParamString`
+- Added `ExtractParamString` utility type to extract and preserve parameter
+  patterns from template strings
+- Simplified `translation.derived` and `translation.fromMachine` type
+  casting
+- Added `CheckParams` utility type for better parameter validation
+- Improved type inference for `CustomMessage` in translations to maintain
+  exact parameter positions
+- Enhanced tuple handling in translation types from `any[]` to proper tuple
+  types `[infer A, ...infer Rest]`
+- Added comprehensive tests for `translation.derived` with nested
+  configurations
+- Updated type tests to verify exact parameter string patterns in
+  `CustomMessage`
+- 🧪 **100%** _coverage_
+
+</details>
+
+<br/>
+
+<details>
 <summary><h3> <strong>Version [0.5.1]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
 
 - Updated `I18nMessage` type to include `LanguageMessages`
