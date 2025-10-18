@@ -8,7 +8,7 @@ en suivant un format cohérent et standardisé.
 ## 📋 Template de prompt à utiliser
 
 ```
-#codebase Bump version inside CHANGELOG.md according to the version inside package.json.
+search/codebase Bump version inside CHANGELOG.md according to the version inside package.json.
 
 Commit message: "[INSÉRER LE MESSAGE DE COMMIT ICI]"
 ```
