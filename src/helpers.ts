@@ -11,8 +11,6 @@ export const defineTranslation: DefineTransition_F = (...args) => {
   return new CustomMessage<any, any>(args[0], args[1] || {});
 };
 
-export const dt = defineTranslation;
-
 export type FnBasic<Main extends Fn, Tr extends object> = Tr & Main;
 
 export const addFn = <Main extends Fn, const Tr extends object = object>(
