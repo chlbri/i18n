@@ -4,11 +4,11 @@
     ".github/workflows/publish-NPM.yml"
   ],
   "chat.tools.terminal.autoApprove": {
-    "/^bash /workspaces/i18n/\\.claude/skills/update-docs/scripts/check-version\\.sh$/": {
+    "/^bash \\.\\/\\.claude/skills/update-docs/scripts/check-version\\.sh$/": {
       "approve": true,
       "matchCommandLine": true
     },
-    "/^bash /workspaces/i18n/\\.claude/skills/update-docs/scripts/find-diff\\.sh$/": {
+    "/^bash \\.\\/\\.claude/skills/update-docs/scripts/find-diff\\.sh$/": {
       "approve": true,
       "matchCommandLine": true
     }

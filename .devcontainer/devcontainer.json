@@ -6,7 +6,6 @@
   "hostRequirements": {
     "memory": "4gb"
   },
-  // pnpm via corepack (ships with Node 24) + install deps
   "postCreateCommand": "corepack use pnpm@11.0.9 && pnpm install --frozen-lockfile",
   // Forward vitest --ui port, also Ollama
   "forwardPorts": [51204, 11434],

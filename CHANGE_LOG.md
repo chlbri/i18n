@@ -4,6 +4,27 @@
 <br/>
 
 <details>
+<summary><h3> <strong>Version [0.5.4]</strong> &mdash; <i>09/05/2026</i> => _08:35_</h3></summary>
+
+- Added `config` property to translation functions for better configuration
+  support
+- Enhanced type definitions with `LanguageMessages` type
+- Updated development tooling: pnpm 11.0.9, oxlint (replacing eslint),
+  oxfmt (replacing prettier)
+- Added documentation for GitHub Actions workflow for automated version
+  bumping
+- Refactored build configuration: migrated from rollup to rolldown
+- Fixed JSON file formatting conventions
+- Removed `DotPathsFor` type definition
+- Updated `.gitignore` with entries for pnpm storage and vitest temporary
+  files
+- 🧪 **100%** _coverage_
+
+</details>
+
+<br/>
+
+<details>
 <summary><h3> <strong>Version [0.5.3]</strong> &mdash; <i>09/05/2026</i> => _08:16_</h3></summary>
 
 - Removed `dt` export alias (use `defineTranslation` directly)
