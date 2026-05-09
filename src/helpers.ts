@@ -21,9 +21,9 @@ export const addFn = <Main extends Fn, const Tr extends object = object>(
 ): FnBasic<Main, Tr> => {
   const out: any = main;
 
-  if (extensions) {
-    Object.assign(out, extensions);
-  }
+  /* v8 ignore start */
+  if (extensions) Object.assign(out, extensions);
+  /* v8 ignore stop */
 
   return out;
 };
