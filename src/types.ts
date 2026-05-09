@@ -1,4 +1,4 @@
-import { Decompose } from '@bemedev/decompose';
+import type { Decompose } from '@bemedev/decompose';
 import type { types } from '@bemedev/types';
 import type { CustomMessage } from './message';
 

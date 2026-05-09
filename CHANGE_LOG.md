@@ -4,6 +4,19 @@
 <br/>
 
 <details>
+<summary><h3> <strong>Version [0.5.3]</strong> &mdash; <i>09/05/2026</i> => _08:16_</h3></summary>
+
+- Removed `dt` export alias (use `defineTranslation` directly)
+- Fixed import statement in types.ts to use `type` keyword for type-only
+  imports
+- Updated pnpm to version 11.0.9
+- 🧪 **100%** _coverage_
+
+</details>
+
+<br/>
+
+<details>
 <summary><h3> <strong>Version [0.5.2]</strong> &mdash; <i>2025/10/18<i/></h3></summary>
 
 - Added `config` property to `Translate_F2` type and `_translation`
