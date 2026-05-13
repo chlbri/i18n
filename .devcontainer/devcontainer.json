@@ -6,7 +6,7 @@
   "hostRequirements": {
     "memory": "4gb"
   },
-  "postCreateCommand": "corepack use pnpm@11.0.9 && pnpm install --frozen-lockfile",
+  "postCreateCommand": "corepack use pnpm@latest && pnpm install --frozen-lockfile",
   // Forward vitest --ui port, also Ollama
   "forwardPorts": [51204, 11434],
   "portsAttributes": {
@@ -56,7 +56,8 @@
         "orta.vscode-twoslash-queries",
         "typescriptteam.native-preview",
         // Language packs
-        "ms-ceintl.vscode-language-pack-fr"
+        "ms-ceintl.vscode-language-pack-fr",
+        "anthropic.claude-code"
       ]
     }
   }

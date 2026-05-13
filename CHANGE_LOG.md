@@ -4,6 +4,49 @@
 <br/>
 
 <details>
+<summary><h3> <strong>Version [0.5.7]</strong> &mdash; <i>13/05/2026</i> => _20:59_</h3></summary>
+
+- Update `publish-NPM.yml` to support `beta` and `canary` branches with
+  dynamic release type (`latest` / `beta` / `canary`)
+- Remove separate `publish-beta.yml` and `publish-canary.yml` workflows
+  (consolidated into `publish-NPM.yml`)
+- Update devcontainer to use `pnpm@latest` instead of a pinned version
+- Add Claude Code VS Code extension (`anthropic.claude-code`) to
+  devcontainer recommendations
+- Update dev dependencies: `@types/node` → `^25.7.0`, `@vitest/coverage-v8`
+  → `^4.1.6`, `oxfmt` → `^0.49.0`, `oxlint` → `^1.64.0`, `vitest` →
+  `^4.1.6`
+- Update package manager to `pnpm@11.1.1`
+- 🧪 **100%** _coverage_
+
+</details>
+
+<br/>
+
+<details>
+<summary><h3> <strong>Version [0.5.6]</strong> &mdash; <i>09/05/2026</i> => _20:45_</h3></summary>
+
+- Patch version bump
+- 🧪 **100%** _coverage_
+
+</details>
+
+<br/>
+
+<details>
+<summary><h3> <strong>Version [0.5.5]</strong> &mdash; <i>09/05/2026</i> => _10:41_</h3></summary>
+
+- Fix CI scripts (`ci`, `ci:off`) to include `p-q` (pretty-quick) step
+- Fix `p-q` script to run `pretty-quick --staged` instead of `pretty-quick`
+- Refactor code structure for improved readability and maintainability
+- Update `@bemedev/dev-utils` → `^0.6.11`
+- 🧪 **100%** _coverage_
+
+</details>
+
+<br/>
+
+<details>
 <summary><h3> <strong>Version [0.5.4]</strong> &mdash; <i>09/05/2026</i> => _08:35_</h3></summary>
 
 - Added `config` property to translation functions for better configuration

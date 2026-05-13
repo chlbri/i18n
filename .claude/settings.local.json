@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /workspaces/i18n/.claude/docs)",
+      "Bash(bash ./skills/update-docs/scripts/check-version.sh *)",
+      "Bash(bash ./skills/update-docs/scripts/find-diff.sh *)"
+    ],
+    "additionalDirectories": ["/workspaces/i18n/.claude"]
+  }
+}
