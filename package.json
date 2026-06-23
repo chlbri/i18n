@@ -48,6 +48,7 @@
     "node": ">=24"
   },
   "scripts": {
+    "pnpm:devPreinstall": "node -e \"const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('./package.json')); const version=require('child_process').execSync('pnpm -v').toString().trim(); pkg.packageManager='pnpm@' + version; fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\\n');\"",
     "_preconfig": "chmod +x .husky/commit-msg",
     "build": "pnpm run rm:lib && pnpm run rolldown",
     "_ci": "pnpm run config && pnpm run lint && pnpm run test",
@@ -122,5 +123,6 @@
   "peerDependencies": {
     "@bemedev/decompose": "^1.1.4",
     "@bemedev/types": "^0.4.1"
-  }
+  },
+  "packageManager": "pnpm@11.8.0"
 }
