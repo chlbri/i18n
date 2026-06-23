@@ -6,6 +6,20 @@
 <details>
 <summary>
 
+## **[0.6.3] - 23/06/2026** => _23:27_
+
+</summary>
+
+- Patch version bump
+- <u>Test coverage **_100%_**</u>
+
+</details>
+
+<br/>
+
+<details>
+<summary>
+
 ## **[0.6.2] - 23/06/2026** => _23:24_
 
 </summary>
