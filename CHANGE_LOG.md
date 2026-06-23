@@ -4,6 +4,30 @@
 <br/>
 
 <details>
+<summary>
+
+## **[0.6.0] - 23/06/2026** => _21:49_
+
+</summary>
+
+- Migrate internal agents and workspace skills from `.claude` to `.agents`
+  folder
+- Fix `tsconfig` import warning in `vitest.config.ts`
+- Remove outdated documentation files (including commit-message-editor,
+  GitHub actions docs, and rxjs documentation)
+- Update configuration files (`.devcontainer/devcontainer.json`,
+  `.vscode/settings.json`, `.gitignore`, Husky hooks, and GitHub actions)
+  for the new agents structure
+- Remove `packageManager` field from `package.json`
+- Update dev dependencies to their latest versions (including Vitest 4.1.9,
+  TypeScript 6.0.3, Oxlint 1.71.0, Oxfmt 0.56.0, and dev-utils 0.8.2)
+- <u>Test coverage **_100%_**</u>
+
+</details>
+
+<br/>
+
+<details>
 <summary><h3> <strong>Version [0.5.7]</strong> &mdash; <i>13/05/2026</i> => _20:59_</h3></summary>
 
 - Update `publish-NPM.yml` to support `beta` and `canary` branches with

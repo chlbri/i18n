@@ -1,14 +1,28 @@
 {
-  "github-actions.workflows.pinned.workflows": [
-    ".github/workflows/ci.yml",
-    ".github/workflows/publish-NPM.yml"
-  ],
+  "yaml.schemas": {
+    "c:\\Users\\DELL PRECISION 5560\\.vscode\\extensions\\continue.continue-1.0.9-win32-x64\\config-yaml-schema.json": [
+      ".continue/**/*.yaml"
+    ],
+    "https://www.schemastore.org/pnpm-workspace.json": "file:///Users/bri/Documents/GitHub/app/pnpm-workspace.yaml"
+  },
   "chat.tools.terminal.autoApprove": {
-    "/^bash \\.\\/\\.claude/skills/update-docs/scripts/check-version\\.sh$/": {
+    "/^bash \\.\\./\\.\\./\\.agents/skills/update-docs/scripts/find-diff\\.sh$/": {
       "approve": true,
       "matchCommandLine": true
     },
-    "/^bash \\.\\/\\.claude/skills/update-docs/scripts/find-diff\\.sh$/": {
+    "/^cd /Users/bri/Documents/GitHub/app/packages/app && bash \\.\\./\\.\\./\\.agents/skills/update-docs/scripts/check-version\\.sh$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^cd /Users/bri/Documents/GitHub/app/vitest && bash \\.\\./\\.agents/skills/update-docs/scripts/check-version\\.sh$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^cd /Users/bri/Documents/GitHub/app/vitest && bash \\.\\./\\.agents/skills/update-docs/scripts/find-diff\\.sh$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^cd /Users/bri/Documents/GitHub/app/packages/vitest && bash \\.\\./\\.\\./\\.agents/skills/update-docs/scripts/check-version\\.sh$/": {
       "approve": true,
       "matchCommandLine": true
     }
