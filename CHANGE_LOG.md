@@ -6,6 +6,25 @@
 <details>
 <summary>
 
+## **[0.6.2] - 23/06/2026** => _23:24_
+
+</summary>
+
+- Refactor: Remove vitest and solidjs package publishing from the GitHub
+  NPM publishing workflow
+- Add `pnpm:devPreinstall` script to `package.json` to dynamically set
+  `packageManager` version
+- Update peer dependency `@bemedev/decompose` to `^2.2.0`
+- Update package manager to `pnpm@11.8.0`
+- <u>Test coverage **_100%_**</u>
+
+</details>
+
+<br/>
+
+<details>
+<summary>
+
 ## **[0.6.0] - 23/06/2026** => _21:49_
 
 </summary>
