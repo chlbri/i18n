@@ -1,55 +1,15 @@
 # @bemedev/i18n
 
 A modern, fully-typed internationalization (i18n) library for TypeScript
-and JavaScript with a fluent, composable API. Define once, compose per-lo//
-Locales are narrowed from machine.keys const call =
-machine.translate('greetings', { name: 'A' }).to; // call: (locale?: 'en' |
-'es-ES' | 'en-US') => string
-
-````
-
-### Utility types
-
-If you need to extract types from your i18n machine, several utility types
-are provided:
-
-```ts
-import type {
-  ConfigFrom,        // Extract the configuration type
-  KeysFrom,          // Extract available locale keys
-  TranslationsFrom,  // Extract all translations
-  TranslationFrom,   // Extract a single locale translation
-  KeyFrom,           // Extract the current locale key
-} from '@bemedev/i18n/class';
-
-import type {
-  RequiredTranslations,  // Make all translations required
-  _Translations,         // Make all translations optional
-  _Params,              // Extract parameters for a translation key
-  CheckParams,          // Validate parameter requirements
-} from '@bemedev/i18n/types';
-
-// Example usage
-type Config = ConfigFrom<typeof machine>;
-type Locales = KeysFrom<typeof machine>;
-type AllTranslations = TranslationsFrom<typeof machine>;
-type EnglishTranslation = TranslationFrom<typeof machine>;
-
-// Extract parameters for a specific key
-type GreetingParams = _Params<Config, 'greetings'>;
-// => { name: string; lastLoginDate: Date }
-````
-
-**Note:** Properties prefixed with `__` (like `__key`, `__translation`) are
-internal and marked as deprecated. They exist only for type inference and
-should not be used at runtime.te safely with strong types.
+and JavaScript with a fluent, composable API. Define once, compose safely
+with strong types.
 
 ## Features
 
 - ✅ Strong TypeScript typing for keys and params
 - ✅ Simple, fluent API with a class-like builder
 - ✅ Formatting helpers: date, number, plural, list, enum
-- ✅ Nested structures with dot-path access
+- ✅ Dot-path structured keys for organization
 - ✅ Locale fallback (en, en-US ➜ en)
 - ✅ Zero-deps runtime, tiny footprint
 
@@ -81,11 +41,9 @@ const machine = create(
     inboxMessages: dt('Hello {name}, you have {messages:plural}.', {
       plural: { messages: { one: '1 message', other: '{?} messages' } },
     }),
-    nested: {
-      greetings: dt('Hello {names:list}!', {
-        list: { names: { style: 'short' } },
-      }),
-    },
+    'nested.greetings': dt('Hello {names:list}!', {
+      list: { names: { style: 'short' } },
+    }),
   }),
   'en',
 )
@@ -103,6 +61,7 @@ const machine = create(
         },
       },
     ),
+    'nested.greetings': dt('¡Hola {names:list}!'),
   }))
   .provideTranslation('en-US', { localee: 'en-US' });
 
@@ -168,24 +127,20 @@ machine.translateWithLocale('en', {
 });
 ```
 
-### Nested keys and arrays
+### Flat keys with dots
 
-Dot-paths are supported for deep access; non-string values (objects/arrays)
-are returned as-is when defined without dt.
+You can organize your translation keys using dots, but the configuration
+structure itself must be flat. Nested objects and arrays are not supported.
 
 ```ts
 const m = create(
   {
-    nested: {
-      data: { lang: 'en', langs: ['fr', 'gb', 'es'] },
-      someArray: ['string1', 'string2'],
-    },
+    'nested.data': 'Hello world',
   },
   'en',
 );
 
-m.translate('nested.data').to('en'); // => { lang: 'en', langs: ['fr','gb','es'] }
-m.translate('nested.someArray').to('en'); // => ['string1', 'string2']
+m.translate('nested.data').to('en'); // => 'Hello world'
 ```
 
 ## Type safety
@@ -284,12 +239,8 @@ const translate = translation(
     greeting: 'Hello',
     farewell: 'Goodbye',
     withParam: 'Hello {name}!',
-    nested: {
-      welcome: 'Welcome back',
-      deep: {
-        message: 'Deep message',
-      },
-    },
+    'nested.welcome': 'Welcome back',
+    'nested.deep.message': 'Deep message',
   },
   'en',
 );
@@ -301,7 +252,7 @@ translate('farewell'); // => 'Goodbye'
 // With parameters
 translate('withParam', { name: 'John' }); // => 'Hello John!'
 
-// Nested keys
+// Flat keys with dot notation
 translate('nested.welcome'); // => 'Welcome back'
 translate('nested.deep.message'); // => 'Deep message'
 ```
@@ -330,9 +281,7 @@ const spanishTranslation = translation.derived<typeof machine.config>(
         },
       },
     ),
-    nested: {
-      greetings: dt('¡Hola {names:list}!'),
-    },
+    'nested.greetings': dt('¡Hola {names:list}!'),
   }),
   'es-ES',
 );

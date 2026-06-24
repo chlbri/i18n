@@ -1,6 +1,6 @@
 {
   "name": "@bemedev/i18n",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "description": "Internationalization library for Bemedev projects, providing utilities for managing translations and locale-specific content.",
   "author": {
     "email": "bri_lvi@icloud.com",
@@ -85,19 +85,17 @@
   },
   "size-limit": [
     {
-      "path": "lib/*.js",
+      "path": "lib/**/*.js",
       "limit": "10 KB"
     },
     {
-      "path": "lib/*.cjs",
+      "path": "lib/**/*.cjs",
       "limit": "10 KB"
     }
   ],
   "devDependencies": {
-    "@bemedev/decompose": "^2.2.0",
     "@bemedev/dev-utils": "^0.8.2",
     "@bemedev/fsf": "^1.0.1",
-    "@bemedev/types": "^0.4.2",
     "@size-limit/file": "^12.1.0",
     "@types/node": "^26.0.0",
     "@vitest/coverage-v8": "^4.1.9",
@@ -114,15 +112,6 @@
     "tslib": "^2.8.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  },
-  "peerDependencies": {
-    "@bemedev/decompose": "^2.2.0",
-    "@bemedev/types": "^0.4.1"
   },
   "packageManager": "pnpm@11.8.0"
 }

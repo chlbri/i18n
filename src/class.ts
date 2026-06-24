@@ -1,4 +1,4 @@
-import { typings } from '@bemedev/types';
+import { _unknown } from './bemedev/globals/utils/_unknown';
 import { addFn, defineTranslation, getTranslation } from './helpers';
 import type {
   _Translations,
@@ -29,14 +29,14 @@ class I18n<
    * @deprecated Used only for typing (TypeScript). Do not use this property at runtime.
    */
   get __key() {
-    return typings.commons<Keys[number]>();
+    return _unknown<Keys[number]>();
   }
 
   /**
    * @deprecated Used only for typing (TypeScript). Do not use this property at runtime.
    */
   get __translation() {
-    return typings.commons<Tr>();
+    return _unknown<Tr>();
   }
 
   constructor(

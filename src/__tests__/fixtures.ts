@@ -14,14 +14,10 @@ export const machine = create(
     hobby: dt('You chose {hobby:enum} as your hobby.', {
       enum: { hobby: { runner: 'runner', developer: 'developer' } },
     }),
-    nested: {
-      greetings: dt('Hello {names:list}!', {
-        list: { names: { style: 'short' } },
-      }),
-      data: { lang: 'en', langs: ['fr', 'gb', 'es'] },
-      someArray: ['string1', 'string2'],
-      one: dt('Line {LINE} is empty'),
-    },
+    'nested.greetings': dt('Hello {names:list}!', {
+      list: { names: { style: 'short' } },
+    }),
+    'nested.one': dt('Line {LINE} is empty'),
 
     jerseyNumber: dt('Your number is {jersey:number}.', {
       number: {
@@ -67,12 +63,8 @@ export const machine = create(
       },
     }),
 
-    nested: {
-      greetings: dt('¡Hola {names:list}!'),
-      data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
-      one: dt('La línea {LINE} está vacía'),
-      someArray: ['cadena1', 'cadena2'],
-    },
+    'nested.greetings': dt('¡Hola {names:list}!'),
+    'nested.one': dt('La línea {LINE} está vacía'),
 
     jerseyNumber: dt('Tu número es {jersey:number}.', {
       number: {
@@ -84,6 +76,4 @@ export const machine = create(
     localee: 'en-US',
   });
 
-export const translate = machine.translate;
-
-export const translateWithLocale = machine.translateWithLocale;
+export const { translate, translateWithLocale } = machine;

@@ -14,12 +14,8 @@ describe('#01 => translation', () => {
         greeting: 'Hello',
         farewell: 'Goodbye',
         withParam: 'Hello {name}!',
-        nested: {
-          welcome: 'Welcome back',
-          deep: {
-            message: 'Deep message',
-          },
-        },
+        'nested.welcome': 'Welcome back',
+        'nested.deep.message': 'Deep message',
       },
       'en',
     );
@@ -45,14 +41,6 @@ describe('#01 => translation', () => {
 
       test('#02 => deep nested message', () => {
         expect(translate('nested.deep.message')).toBe('Deep message');
-      });
-    });
-
-    test('#04 => should return nested objects when accessing partial paths', () => {
-      const nested = translate('nested');
-      expect(nested).toEqual({
-        welcome: 'Welcome back',
-        deep: { message: 'Deep message' },
       });
     });
   });
@@ -176,13 +164,8 @@ describe('#01 => translation', () => {
 
     describe('#02 => should handle complex nested structures', () => {
       const translate = translation({
-        level1: {
-          level2: {
-            level3: 'Deep nested value',
-            array: ['item1', 'item2'],
-          },
-          simple: 'Simple value',
-        },
+        'level1.level2.level3': 'Deep nested value',
+        'level1.simple': 'Simple value',
         root: 'Root level',
       });
 
@@ -198,13 +181,6 @@ describe('#01 => translation', () => {
 
       test('#03 => root level access', () => {
         expect(translate('root')).toBe('Root level');
-      });
-
-      test('#04 => array value access', () => {
-        expect(translate('level1.level2.array')).toEqual([
-          'item1',
-          'item2',
-        ]);
       });
     });
   });
@@ -243,12 +219,8 @@ const derived1 = translation.derived<typeof machine.config>(
       },
     }),
 
-    nested: {
-      greetings: dt('¡Hola {names:list}!'),
-      data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
-      one: dt('Line {LINE} is empty', {}),
-      someArray: ['cadena1', 'cadena2'],
-    },
+    'nested.greetings': dt('¡Hola {names:list}!'),
+    'nested.one': dt('Line {LINE} is empty', {}),
 
     jerseyNumber: dt('Tu número es {jersey:number}.', {
       number: {
@@ -260,11 +232,6 @@ const derived1 = translation.derived<typeof machine.config>(
 );
 describe('#02 => translation.derived', () => {
   derived1('localee');
-
-  derived1('nested', {
-    'nested.greetings': { names: ['Ana', 'Luis', 'María'] },
-    'nested.one': { LINE: 'string' },
-  });
 
   const { acceptation, success } = createTests(derived1 as any);
 
@@ -327,16 +294,6 @@ describe('#02 => translation.derived', () => {
         parameters: ['jerseyNumber', { jersey: 23.0001 }],
         expected: 'Tu número es 23.',
       },
-      {
-        invite: 'nested.data.lang',
-        parameters: 'nested.data.lang',
-        expected: 'es',
-      },
-      {
-        invite: 'nested.data',
-        parameters: 'nested.data',
-        expected: { lang: 'es', langs: ['fr', 'gb', 'en'] },
-      },
     ),
   );
 });
@@ -375,12 +332,8 @@ describe('#03 => translation.derived #2', () => {
         },
       }),
 
-      nested: {
-        greetings: dt('¡Hola {names:list}!'),
-        data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
-        one: dt('Line {LINE} is empty', {}),
-        someArray: ['cadena1', 'cadena2'],
-      },
+      'nested.greetings': dt('¡Hola {names:list}!'),
+      'nested.one': dt('Line {LINE} is empty', {}),
 
       jerseyNumber: dt('Tu número es {jersey:number}.', {
         number: {
@@ -393,11 +346,6 @@ describe('#03 => translation.derived #2', () => {
 
   func('localee');
 
-  func('nested', {
-    'nested.greetings': { names: ['Ana', 'Luis', 'María'] },
-    'nested.one': { LINE: 'string' },
-  });
-
   const { acceptation, success } = createTests(func as any);
 
   describe('#00 => Acceptation', acceptation);
@@ -458,16 +406,6 @@ describe('#03 => translation.derived #2', () => {
         invite: 'jerseyNumber',
         parameters: ['jerseyNumber', { jersey: 23.0001 }],
         expected: 'Tu número es 23.',
-      },
-      {
-        invite: 'nested.data.lang',
-        parameters: 'nested.data.lang',
-        expected: 'es',
-      },
-      {
-        invite: 'nested.data',
-        parameters: 'nested.data',
-        expected: { lang: 'es', langs: ['fr', 'gb', 'en'] },
       },
     ),
   );
@@ -478,11 +416,6 @@ describe('#04 => translation and derive', () => {
 
   func('localee');
 
-  func('nested', {
-    'nested.greetings': { names: ['Ana', 'Luis', 'María'] },
-    'nested.one': { LINE: 'string' },
-  });
-
   const { acceptation, success } = createTests(func as any);
 
   describe('#00 => Acceptation', acceptation);
@@ -543,16 +476,6 @@ describe('#04 => translation and derive', () => {
         invite: 'jerseyNumber',
         parameters: ['jerseyNumber', { jersey: 23.0001 }],
         expected: 'Tu número es 23.',
-      },
-      {
-        invite: 'nested.data.lang',
-        parameters: 'nested.data.lang',
-        expected: 'es',
-      },
-      {
-        invite: 'nested.data',
-        parameters: 'nested.data',
-        expected: { lang: 'es', langs: ['fr', 'gb', 'en'] },
       },
     ),
   );
@@ -592,12 +515,8 @@ describe('#05 => translation.fromMachine', () => {
         },
       }),
 
-      nested: {
-        greetings: dt('¡Hola {names:list}!'),
-        data: { lang: 'es', langs: ['fr', 'gb', 'en'] },
-        one: dt('Line {LINE} is empty', {}),
-        someArray: ['cadena1', 'cadena2'],
-      },
+      'nested.greetings': dt('¡Hola {names:list}!'),
+      'nested.one': dt('Line {LINE} is empty', {}),
 
       jerseyNumber: dt('Tu número es {jersey:number}.', {
         number: {
@@ -669,16 +588,6 @@ describe('#05 => translation.fromMachine', () => {
         invite: 'jerseyNumber',
         parameters: ['jerseyNumber', { jersey: 23.0001 }],
         expected: 'Tu número es 23.',
-      },
-      {
-        invite: 'nested.data.lang',
-        parameters: 'nested.data.lang',
-        expected: 'es',
-      },
-      {
-        invite: 'nested.data',
-        parameters: 'nested.data',
-        expected: { lang: 'es', langs: ['fr', 'gb', 'en'] },
       },
     ),
   );

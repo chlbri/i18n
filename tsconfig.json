@@ -20,7 +20,8 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "paths": {
-      "#i18n": ["./src/i18n/index.ts"]
+      "#i18n": ["./src/i18n/index.ts"],
+      "#bemedev/*": ["./src/bemedev/*"]
     },
     "noEmit": true,
     "declarationMap": true

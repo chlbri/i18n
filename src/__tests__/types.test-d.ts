@@ -1,4 +1,4 @@
-import type { types } from '@bemedev/types';
+import type { Fn } from '../bemedev/globals/types';
 import type {
   ConfigFrom,
   KeyFrom,
@@ -15,9 +15,9 @@ import type {
 } from '../types';
 import { machine } from './fixtures';
 
-expectTypeOf<typeof machine.translate>().toExtend<types.Fn>();
+expectTypeOf<typeof machine.translate>().toExtend<Fn>();
 expectTypeOf<typeof machine.translate>().toBeFunction();
-expectTypeOf<typeof machine.translateWithLocale>().toExtend<types.Fn>();
+expectTypeOf<typeof machine.translateWithLocale>().toExtend<Fn>();
 
 type Param1 = Parameters<typeof machine.translate>[0];
 expectTypeOf<Param1>().toExtend<string>();
@@ -26,19 +26,9 @@ expectTypeOf<Param1>().toEqualTypeOf<
   | 'greetings'
   | 'inboxMessages'
   | 'hobby'
-  | 'nested'
   | 'jerseyNumber'
   | 'nested.greetings'
   | 'nested.one'
-  | 'nested.data.lang'
-  | 'nested.data.langs.[0]'
-  | 'nested.data.langs.[1]'
-  | 'nested.data.langs.[2]'
-  | 'nested.data.langs'
-  | 'nested.data'
-  | 'nested.someArray.[0]'
-  | 'nested.someArray.[1]'
-  | 'nested.someArray'
 >();
 
 const greetings = machine.translate('greetings', {
@@ -69,9 +59,6 @@ expectTypeOf(trnGreet).toEqualTypeOf<
     >
   | undefined
 >();
-
-export const ddd: `${string}{name}${string}{lastLoginDate:date}${string}` =
-  'Hello {name}{lastLoginDate:date}.';
 
 expectTypeOf(machine.translations.en).toEqualTypeOf<
   TranslationFrom<typeof machine>

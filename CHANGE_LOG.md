@@ -6,6 +6,36 @@
 <details>
 <summary>
 
+## **[0.7.0] - 24/06/2026** => _12:31_
+
+</summary>
+
+- **Breaking changes**:
+  - Strictly prevent nested translation structures in `LanguageMessages`
+    type definition, flattening the configuration to a single-level
+    dictionary. Deep access is now achieved by using flat dot-separated
+    string keys (e.g. `'nested.welcome'`) rather than nested object
+    parameters.
+  - Simplify `Paths<T>` type utility, removing its second generic
+    parameter.
+  - Remove `@bemedev/decompose` and `@bemedev/types` from
+    `peerDependencies`.
+- **Refactor**:
+  - Remove recursive resolution logic in `helpers.ts` and `class.ts` to
+    improve performance.
+  - Add internal bemedev utilities under `src/bemedev/` folder.
+- **Dependencies**:
+  - Remove `@bemedev/decompose` and `@bemedev/types` from
+    `devDependencies`.
+- <u>Test coverage **_100%_**</u>
+
+</details>
+
+<br/>
+
+<details>
+<summary>
+
 ## **[0.6.3] - 23/06/2026** => _23:27_
 
 </summary>

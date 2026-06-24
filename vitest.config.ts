@@ -14,6 +14,7 @@ export default defineConfig({
         '**/index.ts',
         '**/types.ts',
         '**/*.test-d.ts',
+        './src/bemedev/**',
       ],
     }),
   ],

@@ -2,8 +2,8 @@ import { createTests } from '@bemedev/dev-utils/vitest-extended';
 import { translate } from './fixtures';
 
 describe('Other specific tests', () => {
-  describe('#01 => Nested Data Translation', () => {
-    const func = translate('nested.data').to;
+  describe('#01 => Nested One Translation (flat key)', () => {
+    const func = translate('nested.one', { LINE: '10' }).to;
 
     const { acceptation, success } = createTests(func);
 
@@ -14,199 +14,27 @@ describe('Other specific tests', () => {
       success(
         {
           invite: 'without args',
-          expected: {
-            lang: 'en',
-            langs: expect.arrayContaining(['fr', 'gb', 'es']),
-          },
+          expected: 'Line 10 is empty',
         },
         {
           invite: 'en',
           parameters: 'en',
-          expected: {
-            lang: 'en',
-            langs: expect.arrayContaining(['fr', 'gb', 'es']),
-          },
+          expected: 'Line 10 is empty',
         },
         {
           invite: 'en-us, will fallback to "en", because not defs',
           parameters: 'en-us' as any,
-          expected: {
-            lang: 'en',
-            langs: expect.arrayContaining(['fr', 'gb', 'es']),
-          },
+          expected: 'Line 10 is empty',
         },
         {
           invite: 'es',
           parameters: 'es-ES',
-          expected: {
-            lang: 'es' as any,
-            langs: expect.arrayContaining(['fr', 'gb', 'en']),
-          },
+          expected: 'La línea 10 está vacía',
         },
         {
           invite: 'not-exists => en',
           parameters: 'not-exists' as any,
-          expected: {
-            lang: 'en',
-            langs: expect.arrayContaining(['fr', 'gb', 'es']),
-          },
-        },
-      ),
-    );
-  });
-
-  describe('#02 => simple array', () => {
-    const func = translate('nested.someArray').to;
-
-    const { acceptation, success } = createTests(func);
-
-    describe('#02.01 => Acceptation', acceptation);
-
-    describe(
-      '#01.02 => Success',
-      success(
-        {
-          invite: 'without args',
-          expected: expect.arrayContaining(['string1', 'string2']),
-        },
-        {
-          invite: 'en',
-          parameters: 'en',
-          expected: expect.arrayContaining(['string1', 'string2']),
-        },
-        {
-          invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us' as any,
-          expected: expect.arrayContaining(['string1', 'string2']),
-        },
-        {
-          invite: 'es',
-          parameters: 'es-ES',
-          expected: expect.arrayContaining(['cadena1', 'cadena2']),
-        },
-        {
-          invite: 'not-exists => en',
-          parameters: 'not-exists' as any,
-          expected: expect.arrayContaining(['string1', 'string2']),
-        },
-      ),
-    );
-  });
-
-  describe('#03 => simple array with length !== 2', () => {
-    const func = translate('nested.data.langs').to;
-
-    const { acceptation, success } = createTests(func);
-
-    describe('#02.01 => Acceptation', acceptation);
-
-    describe(
-      '#01.02 => Success',
-      success(
-        {
-          invite: 'without args',
-          expected: expect.arrayContaining(['fr', 'gb', 'es']),
-        },
-        {
-          invite: 'en',
-          parameters: 'en',
-          expected: expect.arrayContaining(['fr', 'gb', 'es']),
-        },
-        {
-          invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us' as any,
-          expected: expect.arrayContaining(['fr', 'gb', 'es']),
-        },
-        {
-          invite: 'es',
-          parameters: 'es-ES',
-          expected: expect.arrayContaining(['fr', 'gb', 'en']),
-        },
-        {
-          invite: 'not-exists => en',
-          parameters: 'not-exists' as any,
-          expected: expect.arrayContaining(['fr', 'gb', 'es']),
-        },
-      ),
-    );
-  });
-
-  describe('#04 => Complex, "nested" key', () => {
-    const func = translate('nested', {
-      'nested.one': { LINE: 'string' },
-      'nested.greetings': { names: ['Alfred'] },
-    }).to;
-
-    const { acceptation, success } = createTests(func);
-
-    describe('#04.01 => Acceptation', acceptation);
-
-    describe(
-      '#04.02 => Success',
-      success(
-        {
-          invite: 'without args',
-          expected: {
-            data: {
-              lang: 'en',
-              langs: expect.arrayContaining(['fr', 'gb', 'es']),
-            },
-            greetings: 'Hello Alfred!',
-            one: 'Line string is empty',
-            someArray: expect.arrayContaining(['string1', 'string2']),
-          } as any,
-        },
-        {
-          invite: 'en',
-          parameters: 'en',
-          expected: {
-            data: {
-              lang: 'en',
-              langs: expect.arrayContaining(['fr', 'gb', 'es']),
-            },
-            greetings: 'Hello Alfred!',
-            one: 'Line string is empty',
-            someArray: expect.arrayContaining(['string1', 'string2']),
-          } as any,
-        },
-        {
-          invite: 'en-us, will fallback to "en", because not defs',
-          parameters: 'en-us' as any,
-          expected: {
-            data: {
-              lang: 'en',
-              langs: expect.arrayContaining(['fr', 'gb', 'es']),
-            },
-            greetings: 'Hello Alfred!',
-            one: 'Line string is empty',
-            someArray: expect.arrayContaining(['string1', 'string2']),
-          } as any,
-        },
-        {
-          invite: 'es',
-          parameters: 'es-ES',
-          expected: {
-            data: {
-              lang: 'es',
-              langs: expect.arrayContaining(['fr', 'gb', 'en']),
-            },
-            greetings: '¡Hola Alfred!',
-            one: 'La línea string está vacía',
-            someArray: expect.arrayContaining(['cadena1', 'cadena2']),
-          } as any,
-        },
-        {
-          invite: 'not-exists => en',
-          parameters: 'not-exists' as any,
-          expected: {
-            data: {
-              lang: 'en',
-              langs: expect.arrayContaining(['fr', 'gb', 'es']),
-            },
-            greetings: 'Hello Alfred!',
-            one: 'Line string is empty',
-            someArray: expect.arrayContaining(['string1', 'string2']),
-          } as any,
+          expected: 'Line 10 is empty',
         },
       ),
     );

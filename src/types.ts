@@ -1,18 +1,11 @@
-import type { Decompose } from '@bemedev/decompose';
-import type { types } from '@bemedev/types';
+import type { Keys, SoA } from './bemedev/globals/types';
 import type { CustomMessage } from './message';
-
-export type Fn<Args extends any[] = any[], R = any> = (...args: Args) => R;
 
 type StateValeMap = {
   [key: string]: StateValue;
 };
 
 export type StateValue = string | StateValeMap;
-
-export type SoA<T> = T | T[];
-
-export type Keys = keyof any;
 
 export type Plural<S extends Keys> = {
   [K in S]: Partial<
@@ -116,39 +109,13 @@ export type RequiredTranslations<R extends LanguageMessages> = Extract<
   LanguageMessages
 >;
 
-type Array2 = [string, unknown];
-
 export type _I18nMessage = string | CustomMessage;
 
-export type I18nMessage = types.SoA<_I18nMessage | LanguageMessages>;
+export type I18nMessage = SoA<_I18nMessage>;
 
 export type LanguageMessages = {
-  [key: string]: I18nMessage;
+  [key: string]: _I18nMessage;
 };
-
-type Join<K, P> = K extends string
-  ? P extends string
-    ? `${K}.${P}`
-    : never
-  : never;
-
-export type _Soften<T> = {
-  [K in keyof T]: T[K] extends Array2
-    ? T[K]
-    : T[K] extends object
-      ? _Soften<T[K]>
-      : string;
-};
-
-// export type Soften = _Soften;
-
-export type _ObjectDotKeys<T> = {
-  [K in keyof T]: T[K] extends Array2
-    ? never
-    : T[K] extends object
-      ? K | Join<K, _ObjectDotKeys<T[K]>>
-      : never;
-}[keyof T];
 
 type EnumMap = Record<string, Record<string, string>>;
 
@@ -180,23 +147,18 @@ type ExtractParamArgs<
     : { [K in Param]: string } & ExtractParamArgs<Rest, Enums> // If the string has no parameter type
   : unknown; // If the string has no parameters
 
-type TranslationAtKeyWithParams<
-  T,
-  Key extends string,
-  D = Decompose<T, { start: false; object: 'both'; sep: '.' }>,
-> = Key extends keyof D ? D[Key] : never;
-
 type NormalizedTranslationAtKey<T> =
   T extends CustomMessage<infer S, infer A> ? [S, A] : [T, unknown];
 
 type NormalizedTranslationAtKeyWithParams<
-  Translations,
-  Key extends string,
-> = NormalizedTranslationAtKey<
-  TranslationAtKeyWithParams<Translations, Key>
->;
+  Translations extends LanguageMessages,
+  Key extends keyof Translations,
+> = NormalizedTranslationAtKey<Translations[Key]>;
 
-export type _Params<Translations, S extends string> =
+export type _Params<
+  Translations extends LanguageMessages,
+  S extends keyof Translations,
+> =
   NormalizedTranslationAtKeyWithParams<
     Translations,
     S
@@ -216,7 +178,10 @@ export type _Params<Translations, S extends string> =
       >
     : never;
 
-export type CheckParams<Translations, S extends string> =
+export type CheckParams<
+  Translations extends LanguageMessages,
+  S extends keyof Translations,
+> =
   NormalizedTranslationAtKeyWithParams<
     Translations,
     S
@@ -229,83 +194,56 @@ export type CheckParams<Translations, S extends string> =
       : A[1]
     : never;
 
-type _DecomposedKeys<T extends object> = keyof Decompose<
-  T,
-  { start: false; object: 'key'; sep: '.' }
-> &
-  string;
-
-export type PathsWithParams<T extends object> =
-  _DecomposedKeys<T> extends infer D extends string
-    ? D extends string
+export type PathsWithParams<T extends LanguageMessages> =
+  keyof T extends infer D extends string
+    ? D extends keyof T
       ? keyof _Params<T, D> extends never
         ? never
         : D
       : never
     : never;
 
-export type PathsWithNoParams<T extends object> =
-  _DecomposedKeys<T> extends infer D extends string
-    ? D extends string
+export type PathsWithNoParams<T extends LanguageMessages> =
+  keyof T extends infer D extends string
+    ? D extends keyof T & string
       ? keyof _Params<T, D> extends never
         ? D
         : never
       : never
     : never;
 
-export type Paths<T extends object> =
-  | { key: PathsWithParams<T>; args: _Params<T, PathsWithParams<T>> }
-  | { key: PathsWithNoParams<T>; args?: never }
-  | PathsWithNoParams<T>;
+export type Paths<
+  T extends LanguageMessages,
+  Pp extends keyof T = PathsWithParams<T>,
+  Pn = Exclude<keyof T, Pp>,
+> = { key: Pp; args: _Params<T, Pp> } | { key: Pn; args?: never } | Pn;
 
 export type ArrayKey = `${string}[${number}]${string}`;
 
 export type Translate_F<
   R extends LanguageMessages,
   Keys extends string,
-  D = Decompose<R, { start: false; object: 'both'; sep: '.' }>,
-  Pn extends string = PathsWithNoParams<R>,
-  Pp extends string = PathsWithParams<R>,
-  KS extends keyof D & string = Exclude<keyof D, Pn | Pp> & string,
-> = <const S extends KS | Pp | Pn>(
+  Pp extends keyof R = PathsWithParams<R>,
+> = <const S extends keyof R>(
   key: S,
-  ...args: S extends Pp
-    ? [_Params<R, S>]
-    : Extract<Pp, `${S}.${string}`> extends never
-      ? []
-      : [
-          args: {
-            [K in Extract<Pp, `${S}.${string}`>]: _Params<R, K>;
-          },
-        ]
+  ...args: S extends Pp ? [_Params<R, S>] : []
 ) => {
-  (locale?: Keys): S extends KS ? D[S] : string;
-  to: (locale?: Keys) => S extends KS ? D[S] : string;
+  (locale?: Keys): string;
+  to: (locale?: Keys) => string;
 };
 
 export type Translate_F2<
   R extends LanguageMessages,
-  D = Decompose<R, { start: false; object: 'both'; sep: '.' }>,
-  Pn extends string = PathsWithNoParams<R>,
   Pp extends string = PathsWithParams<R>,
-  KS extends keyof D & string = Exclude<keyof D, Pn | Pp> & string,
 > = {
-  <const S extends KS | Pp | Pn>(
+  <const S extends keyof R>(
     key: S,
-    ...args: S extends Pp
-      ? [_Params<R, S>]
-      : Extract<Pp, `${S}.${string}`> extends never
-        ? []
-        : [
-            args: {
-              [K in Extract<Pp, `${S}.${string}`>]: _Params<R, K>;
-            },
-          ]
-  ): S extends KS ? D[S] : string;
+    ...args: S extends Pp ? [_Params<R, S>] : []
+  ): string;
   config: R;
 };
 
-export type KeyU<S extends types.Keys> = Record<S, unknown>;
+export type KeyU<S extends Keys> = Record<S, unknown>;
 
 export type Keys18n =
   | 'keys'
