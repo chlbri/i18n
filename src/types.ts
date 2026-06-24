@@ -229,41 +229,34 @@ export type CheckParams<Translations, S extends string> =
       : A[1]
     : never;
 
-export type PathsWithParams<T extends object> = keyof Decompose<
+type _DecomposedKeys<T extends object> = keyof Decompose<
   T,
   { start: false; object: 'key'; sep: '.' }
-> extends infer D extends string
-  ? {
-      [K in D]: keyof _Params<T, Extract<K, string>> extends never
+> &
+  string;
+
+export type PathsWithParams<T extends object> =
+  _DecomposedKeys<T> extends infer D extends string
+    ? D extends string
+      ? keyof _Params<T, D> extends never
         ? never
-        : K;
-    } extends infer P
-    ? { [key in keyof P]: P[key] }[keyof P]
-    : never
-  : never;
+        : D
+      : never
+    : never;
 
-export type PathsWithNoParams<T extends object> = keyof Decompose<
-  T,
-  { start: false; object: 'key'; sep: '.' }
-> extends infer D extends string
-  ? {
-      [K in D]: keyof _Params<T, Extract<K, string>> extends never
-        ? K
-        : never;
-    } extends infer P
-    ? { [key in keyof P]: P[key] }[keyof P]
-    : never
-  : never;
+export type PathsWithNoParams<T extends object> =
+  _DecomposedKeys<T> extends infer D extends string
+    ? D extends string
+      ? keyof _Params<T, D> extends never
+        ? D
+        : never
+      : never
+    : never;
 
-export type Paths<
-  T extends object,
-  K extends Extract<keyof T, string> = Extract<keyof T, string>,
-> =
-  K extends PathsWithParams<T>
-    ? { key: PathsWithParams<T>; args: _Params<T, K> }
-    :
-        | { key: PathsWithNoParams<T>; args: _Params<T, K> }
-        | PathsWithNoParams<T>;
+export type Paths<T extends object> =
+  | { key: PathsWithParams<T>; args: _Params<T, PathsWithParams<T>> }
+  | { key: PathsWithNoParams<T>; args?: never }
+  | PathsWithNoParams<T>;
 
 export type ArrayKey = `${string}[${number}]${string}`;
 
